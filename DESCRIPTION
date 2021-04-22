@@ -1,0 +1,17 @@
+Package: shapes
+Title: Statistical Shape Analysis
+Date: 2021-04-14 
+Version: 1.2.7  
+Author: Ian L. Dryden
+Description: Routines for the statistical analysis of landmark 
+  shapes, including Procrustes analysis, graphical displays, principal
+  components analysis, permutation and bootstrap tests, thin-plate 
+  spline transformation grids and comparing covariance matrices. 
+     See Dryden, I.L. and Mardia, K.V. (2016). Statistical shape analysis, 
+     with Applications in R (2nd Edition), John Wiley and Sons. 
+Maintainer: Ian Dryden   <ian.dryden@nottingham.ac.uk>
+Imports: minpack.lm, scatterplot3d, rgl, MASS
+Depends: R (>= 2.10)
+License: GPL-2
+URL: http://www.maths.nottingham.ac.uk/~ild/shapes
+
