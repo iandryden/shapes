@@ -5,6 +5,8 @@ The current version 1.2.6 is on CRAN.
 
 To use this library: 
 
-   library("devtools")
-   install_github("iandryden/shapes")
+```xml
+   library("devtools")   
+   install_github("iandryden/shapes")   
    library(shapes)
+```
