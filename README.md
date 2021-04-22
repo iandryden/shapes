@@ -8,4 +8,3 @@ To use this library:
 library("devtools")
 install_github("iandryden/shapes")
 library(shapes)
-
