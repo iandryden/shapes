@@ -1,7 +1,6 @@
 1.2.7
 
 Added tangentcoords option to shapes.cva and output all the CV scores (rather than just 3)
-Changed default for pns to BIC as it is much quicker.
 Improved the 3d sphere plot for pns()
 
 1.2.6
