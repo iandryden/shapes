@@ -1,5 +1,7 @@
 1.2.7
 
+New backfit function for backfitting from PNSS or PCA scores
+
 Added tangentcoords option to shapes.cva and output all the CV scores (rather than just 3)
 
 Improved the 3d sphere plot for pns()
