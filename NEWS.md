@@ -4,6 +4,8 @@ Added tangentcoords option to shapes.cva and output all the CV scores (rather th
 
 Improved the 3d sphere plot for pns()
 
+speed up pnss3d when n < km-m(m-1)/2-m
+
 1.2.6
 
 Added in pnss3d and plot3darcs for displaying the PNSS modes of variation
