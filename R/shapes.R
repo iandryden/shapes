@@ -48,12 +48,12 @@ plot3darcs<-function(x,pcno=1,c=1,nn=100,boundary.data=TRUE,view.theta=0,view.ph
     PNSmean = pns.out$PNS$mean
     GPAout = pns.out$GPAout
     {
-        cat("stdev of PNS1 score:", round(sd(pns.out$resmat[1, 
-            ]), 4), "\n")
-        cat("stdev of PNS2 score:", round(sd(pns.out$resmat[2, 
-            ]), 4), "\n")
-        cat("stdev of PNS3 score:", round(sd(pns.out$resmat[3, 
-            ]), 4), "\n")
+   #     cat("stdev of PNS1 score:", round(sd(pns.out$resmat[1, 
+   #         ]), 4), "\n")
+   #    cat("stdev of PNS2 score:", round(sd(pns.out$resmat[2, 
+   #        ]), 4), "\n")
+   #    cat("stdev of PNS3 score:", round(sd(pns.out$resmat[3, 
+   #        ]), 4), "\n")
     }
     rng = c * sd(pns.out$resmat[1, ])
     val = c(seq(-rng, 0, length = nn + 1)[-(nn + 1)], 0, seq(0, 
