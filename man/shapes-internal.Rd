@@ -1,4 +1,5 @@
 \name{shapes-internal}
+\alias{backfit}
 \alias{sphere1.f}
 \alias{rgl.sphgrid1}
 \alias{sph2car1}
