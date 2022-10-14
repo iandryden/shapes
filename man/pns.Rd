@@ -4,7 +4,8 @@
 \description{Calculation of Principal Nested Spheres
 }
 \usage{
-pns(x, sphere.type = "seq.test", alpha = 0.1, R = 100, nlast.small.sphere = 1)
+pns(x, sphere.type = "seq.test", alpha = 0.1, R = 100, 
+                              nlast.small.sphere = 1, output=TRUE)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
@@ -28,6 +29,7 @@ specifies Principal Nested GREAT Sphere for the first part and Principal Nested 
 \item{R}{the number of bootstrap samples to be evaluated for the sequential test. The default is 100.}
 \item{nlast.small.sphere}{the number of small spheres in the finishing part used when 
 sphere.type = "bi.sphere".}
+\item{output}{Logical. If TRUE then plots and some brief printed summaries are given. If FALSE then no plots or output is given.} 
 }
 \value{A list with components
 \item{resmat}{the residual matrix (X_PNS). Each entry in row k works like the kth principal component} 

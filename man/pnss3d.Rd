@@ -6,7 +6,7 @@
 }
 \usage{
 pnss3d(x,sphere.type="seq.test",alpha = 0.1,R = 100,
-                        nlast.small.sphere = 1,n.pc="Full")
+                        nlast.small.sphere = 1,n.pc="Full",output=TRUE)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
@@ -33,6 +33,7 @@ The default is 100.}
 \item{nlast.small.sphere}{the number of small spheres in the finishing part used when 
 sphere.type = "bi.sphere".}
 \item{n.pc}{the number of PC scores to be used (n.pc >= 2)}
+\item{output}{Logical. If TRUE then plots and some brief printed summaries are given. If FALSE then no plots or output is given.} 
 }
 \value{A list with components
 \item{PNS}{the output of the function pns}
