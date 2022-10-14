@@ -820,11 +820,45 @@ if (output){
   }
   resmat = flipud0(repmat(matrix(radii, ncol = 1), 1, n) * resmat)
   
+<<<<<<< Updated upstream
+if (d>2){
+=======
 if (d>1){
+>>>>>>> Stashed changes
 if (output){
   ### plot points on the 3D sphere (red), with 2D projection (blue)
   rgl.sphgrid1()
   sphere1.f(col="white",alpha=0.6)
+<<<<<<< Updated upstream
+  spheres3d(-PNS$circlePNS[,2],PNS$circlePNS[,1],PNS$circlePNS[,3],radius=0.02,col=4)  
+  spheres3d(-PNS$spherePNS[,2],PNS$spherePNS[,1],PNS$spherePNS[,3],radius=0.02,col=2)
+}
+yy <- orthaxis[[d-1]]
+xx <- c(-yy[2], yy[1] , yy[3])
+c1<-Enorm( c(xx[1],xx[2],xx[3])- c(-PNS$circlePNS[1,2],PNS$circlePNS[1,1],PNS$circlePNS[1,3]))
+costheta<- 1 - c1^2/2
+angle<-(1:201)/(200)*2*pi
+centre<- xx*costheta
+A<- xx-centre
+B<- diag(3)-A%*%t(A)/Enorm(A)**2
+bv<-eigen(B)$vectors
+b1<-bv[,1]
+b2<-bv[,2]
+cc<- sin(acos(costheta))* ( cos(angle)%*%t(b1) + sin(angle)%*%t(b2) ) + rep(1,times=201)%*%t(centre)
+if (output){
+lines3d(cc,col=3,lwd=2)
+}
+sum<-0
+for (i in 1:n){
+sum=sum+  ( acos( cc%*%c(-PNS$circlePNS[i,2],PNS$circlePNS[i,1],PNS$circlePNS[i,3])) )**2
+}
+mean0angle<-which.min(sum[1:200])/200*2*pi
+meanpt<- sin(acos(costheta))* ( cos(mean0angle)%*%t(b1) + sin(mean0angle)%*%t(b2) ) +t(centre)
+if (output){
+spheres3d( meanpt, radius=0.04,col=7, alpha=0.8)
+}
+}
+=======
   sphrad <- 0.01
   spheres3d(-PNS$circlePNS[,2],PNS$circlePNS[,1],PNS$circlePNS[,3],radius=sphrad,col=4)  
   spheres3d(-PNS$spherePNS[,2],PNS$spherePNS[,1],PNS$spherePNS[,3],radius=sphrad,col=2)
@@ -857,6 +891,7 @@ lines3d(cc,col=3,lwd=2)
 #}
 
 }
+>>>>>>> Stashed changes
   PNS$scores = t(resmat) 
   PNS$radii = radii
   PNS$pnscircle <- cbind( cbind( cc[,2],-cc[,1]) , cc[,3])
