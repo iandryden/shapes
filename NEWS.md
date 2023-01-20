@@ -1,6 +1,7 @@
 # shapes 1.2.7
 
 ## Features
+
 * New backfit function for backfitting from PNSS or PCA scores
 
 * Added tangentcoords option to shapes.cva and output all the CV scores (rather than just 3)
@@ -9,20 +10,26 @@
 
 * speed up pnss3d when n < km-m(m-1)/2-m
 
+## Fixes
+
+* changed rgl.open to open3d and rgl.bg to bg3d
+
 # shapes 1.2.6
 
 ## Features
+
 Added in pnss3d and plot3darcs for displaying the PNSS modes of variation
 
 # shapes 1.2.5
 
 ## Features
+
 Faster versions of some functions kindly supplied by 
 Gregorio Quintana-Orti and Amelia Simo, University Jaume I, Spain.
 
 ## Fixes
-Corrected bug in estcov for method="Power" when exit occurred in some zero
-eigenvalue cases, by including abs(eigenvalue)  
+
+Corrected bug in estcov for method="Power" when exit occurred in some zero eigenvalue cases, by including abs(eigenvalue)  
 
 
 # shapes 1.2.4 
