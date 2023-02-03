@@ -4,7 +4,7 @@
 # written by Ian Dryden in R  (see http://cran.r-project.org)
 # (c) Ian Dryden
 #     UoN, FIU. version 1.2.7
-#                    2003-2022
+#                    2003-2023
 #
 # Includes contributions by many other authors, including
 #   Mohammad Faghihi, Kwang-Rae Kim, Alfred Kume,
@@ -845,16 +845,19 @@ if (output){
 lines3d(cc,col=3,lwd=2)
 }
 
-#sum<-0
-#for (i in 1:n){
-#sum=sum+  ( acos( cc%*%c(-PNS$circlePNS[i,2],PNS$circlePNS[i,1],PNS$circlePNS[i,3])) )**2
-#}
-#mean0angle<-which.min(sum[1:200])/200*2*pi
-#meanpt<- sin(acos(costheta))* ( cos(mean0angle)%*%t(b1) + sin(mean0angle)%*%t(b2) ) +t(centre)
-#if (output){
-#spheres3d( meanpt, radius=0.04,col=7, alpha=0.8)
-#print(meanpt)
-#}
+######   
+if (output){ 
+  lines3d(cc,col=3,lwd=2)
+  sum<-0
+  for (i in 1:n){
+  sum=sum+  ( acos( cc%*%c(-PNS$circlePNS[i,2],PNS$circlePNS[i,1],PNS$circlePNS[i,3])) )**2
+}
+mean0angle<-which.min(sum[1:200])/200*2*pi
+meanpt<- sin(acos(costheta))* ( cos(mean0angle)%*%t(b1) + sin(mean0angle)%*%t(b2) ) +t(centre)
+spheres3d( meanpt, radius=sphrad * 1.5,col=7, alpha=0.8)
+}
+###########
+
 
 }
   PNS$scores = t(resmat) 
