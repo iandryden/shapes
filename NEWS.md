@@ -1,3 +1,9 @@
+# shapes 1.2.8
+
+## Fixes
+
+Fixed a bug in the plot of the PNS mean in the function pns
+
 # shapes 1.2.7
 
 ## Features
