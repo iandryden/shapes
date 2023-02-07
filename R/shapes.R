@@ -871,11 +871,6 @@ spheres3d( meanpt, radius=sphrad * 1.5,col=7, alpha=0.8)
   PNS$mean = c(PNSe2s(matrix(0, d, 1), PNS))
 
 
-meanplot <- c( -PNS$mean[2],PNS$mean[1],PNS$mean[3] )  
-
-if (output){
-spheres3d( meanplot, radius=sphrad*1.5,col=7, alpha=0.8)
-}
 
   
   if (sphere.type == "seq.test")
