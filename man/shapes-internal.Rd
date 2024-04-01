@@ -1,5 +1,9 @@
 \name{shapes-internal}
+<<<<<<< Updated upstream
 \alias{backfit}
+=======
+\alias{projectPNS}
+>>>>>>> Stashed changes
 \alias{sphere1.f}
 \alias{rgl.sphgrid1}
 \alias{sph2car1}

@@ -1,5 +1,12 @@
 # shapes 1.2.8
 
+<<<<<<< Updated upstream
+=======
+## Features
+
+fastpns carried out pns but also has an option to first reduce dimension by PCA to n.pc, then fit pns. Useful for high-dimensional data, e.g. dimension > 30.
+
+>>>>>>> Stashed changes
 ## Fixes
 
 Fixed a bug in the plot of the PNS mean in the function pns

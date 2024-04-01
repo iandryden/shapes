@@ -334,6 +334,14 @@ xout
 }
 
 
+<<<<<<< Updated upstream
+=======
+projectPNS <- function( x , PNS){
+#obtain the PNS scores for new spherical data with respect to a PNS object  PNSobj <- PNS  x<-as.matrix(x)  k <- dim(x)[1]  n <- dim(x)[2]  d <- k-1  scorescheck <- matrix(0,n,d)currentSphere <- xfor (i in 1:(d-1)){center <- PNSobj$PNS$orthaxis[[i]]r <- PNSobj$PNS$dist[i]res = ( acos(t(center) %*% currentSphere) - r )scorescheck[,d+1-i]<-t(res)*PNSobj$PNS$radii[i]  #rescale by actual radius of (sub)sphere where fit is carried out#####cur.proj = project.subsphere(x = currentSphere,                  center = center, r = r)  NestedSphere = rotMat(center) %*% currentSphere  currentSphere = NestedSphere[1:(k - i), ]/repmat(matrix(sqrt(1 -                  NestedSphere[nrow(NestedSphere), ]^2), nrow = 1),                  k - i, 1)##############  }    S1toRadian = atan2(currentSphere[2, ], currentSphere[1, ])    meantheta = geodmeanS1(S1toRadian)$geodmean    meantheta <- PNSobj$PNS$orthaxis[[d]]    scorescheck[,1] = (mod(S1toRadian - meantheta + pi, 2 * pi) -        pi     )*    PNSobj$PNS$radii[d]  #rescale by actual radius of fitted circle    scorescheck}
+
+
+fastpns<- function(x, n.pc = "Full", sphere.type = "seq.test", alpha = 0.1, R = 100, nlast.small.sphere = 1, output=TRUE, pointcolor=2){    if (n.pc == "Full") {        n.pc = min( c( dim(x)[1] , dim(x)[2]-1) )    }Xs<-t(x)for (i in 1:n){Xs[i,] <- Xs[i,]/Enorm(Xs[i,]) }#mean on the spheremuhat <- apply( Xs, 2, mean)muhat <- muhat/Enorm(muhat)#Tangent coordinates to sphereTT <- Xsfor (i in 1:n){  TT[i,] <- Xs[i,] - sum(Xs[i,]*muhat)*muhat}pca <- prcomp( TT )pcapercent <-  sum(pca$sdev[1:n.pc]**2/sum(pca$sdev**2)) cat(c("Initial PNS subsphere dimension",n.pc+1,"\n"))cat(c("Percentage of variability in PNS sequence",round(pcapercent*100,2),"\n"))TT <- t(TT)# select the top n.pc PCs to project the data to a subsphere# of dimension n.pc+1ans <- pcscore2sphere3( n.pc , muhat, Xs,  TT, pca$rotation)Xssub <- ans#Carry out PNS on the (possibly) reduced dimension sub-spehreout <- pns( t(Xssub), sphere.type = sphere.type, alpha = alpha, R = R,                               nlast.small.sphere = nlast.small.sphere, output=output, pointcolor=pointcolor)  out$percent <- out$percent * pcapercentcat(c("Percent explained by 1st three PNS scores out of total variability:","\n",round(out$percent[1:3],2),"\n"))out$spheredata <- t(Xssub)out$pca <- pcaout  }
+>>>>>>> Stashed changes
 
 
 #==================================================================================

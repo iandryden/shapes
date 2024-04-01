@@ -32,7 +32,11 @@ SMALL Sphere for the last part. The default is "seq.test".
 The default is 100.}
 \item{nlast.small.sphere}{the number of small spheres in the finishing part used when 
 sphere.type = "bi.sphere".}
+<<<<<<< Updated upstream
 \item{n.pc}{the number of PC scores to be used (n.pc >= 2)}
+=======
+  \item{n.pc}{the number of PC scores to be used (n.pc >= 2). The default "Full" is to use all PCs.}
+>>>>>>> Stashed changes
 \item{output}{Logical. If TRUE then plots and some brief printed summaries are given. If FALSE then no plots or output is given.} 
 }
 \value{A list with components
