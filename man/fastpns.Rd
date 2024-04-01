@@ -1,16 +1,17 @@
-\name{pns}
-\alias{pns}
-\title{Principal Nested Spheres}
-\description{Calculation of Principal Nested Spheres
+\name{fastpns}
+\alias{fastpns}
+\title{Fast Principal Nested Spheres}
+\description{Fast calculation of Principal Nested Spheres
 }
 \usage{
-pns(x, sphere.type = "seq.test", alpha = 0.1, R = 100, 
+fastpns(x, n.pc = "Full", sphere.type = "seq.test", alpha = 0.1, R = 100, 
                               nlast.small.sphere = 1, output=TRUE, pointcolor=2)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
   \item{x}{a (d + 1) x n data matrix where each column is a unit vector in S^d and n is the sample size.
 }
+  \item{n.pc}{the number of PC scores to be used (n.pc >= 2). The default "Full" is to use all PCs.}
   \item{sphere.type}{
   a character string specifying the type of sphere fitting method.
 "seq.test"
@@ -58,7 +59,7 @@ Jung, S., Dryden, I.L. and Marron, J.S. (2012). Analysis of principal nested sph
 
 #  out <- pc2sphere(x = gorf.dat, n.pc = 2)
 #  spheredata <- t(out$spheredata)
-#  pns.out <- pns(x = spheredata)
+#  pns.out <- fastpns(x = spheredata, n.pc=2)
 
 }
 
