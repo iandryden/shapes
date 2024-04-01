@@ -1,8 +1,10 @@
 \name{shapes-internal}
+\alias{projectPNS}
 \alias{sphere1.f}
 \alias{rgl.sphgrid1}
 \alias{sph2car1}
 \alias{pc2sphere2} 
+\alias{pcscore2sphere2}
 \alias{preshape2shape}
 \alias{tangentcoords.partial.inv}
 \alias{multiply_by_transpose_of_helmert_implicitly} 

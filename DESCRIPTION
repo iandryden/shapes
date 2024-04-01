@@ -1,7 +1,7 @@
 Package: shapes
 Title: Statistical Shape Analysis
-Date: 2021-04-22 
-Version: 1.2.7  
+Date: 2024-04-01 
+Version: 1.2.8  
 Author: Ian L. Dryden
 Description: Routines for the statistical analysis of landmark 
   shapes, including Procrustes analysis, graphical displays, principal
@@ -13,5 +13,4 @@ Maintainer: Ian Dryden   <ian.dryden@nottingham.ac.uk>
 Imports: minpack.lm, scatterplot3d, rgl, MASS
 Depends: R (>= 2.10)
 License: GPL-2
-URL: http://www.maths.nottingham.ac.uk/~ild/shapes
-
+URL: https://github.com/iandryden/shapes
