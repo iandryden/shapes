@@ -335,17 +335,107 @@ xout
 
 
 projectPNS <- function( x , PNS){
-#obtain the PNS scores for new spherical data with respect to a PNS object  PNSobj <- PNS  x<-as.matrix(x)  k <- dim(x)[1]  n <- dim(x)[2]  d <- k-1  scorescheck <- matrix(0,n,d)currentSphere <- xfor (i in 1:(d-1)){center <- PNSobj$PNS$orthaxis[[i]]r <- PNSobj$PNS$dist[i]res = ( acos(t(center) %*% currentSphere) - r )scorescheck[,d+1-i]<-t(res)*PNSobj$PNS$radii[i]  #rescale by actual radius of (sub)sphere where fit is carried out#####cur.proj = project.subsphere(x = currentSphere,                  center = center, r = r)  NestedSphere = rotMat(center) %*% currentSphere  currentSphere = NestedSphere[1:(k - i), ]/repmat(matrix(sqrt(1 -                  NestedSphere[nrow(NestedSphere), ]^2), nrow = 1),                  k - i, 1)##############  }    S1toRadian = atan2(currentSphere[2, ], currentSphere[1, ])    meantheta = geodmeanS1(S1toRadian)$geodmean    meantheta <- PNSobj$PNS$orthaxis[[d]]    scorescheck[,1] = (mod(S1toRadian - meantheta + pi, 2 * pi) -        pi     )*    PNSobj$PNS$radii[d]  #rescale by actual radius of fitted circle    scorescheck}
+#obtain the PNS scores for new spherical data with respect to a PNS object
+  PNSobj <- PNS
+  x<-as.matrix(x)
+  k <- dim(x)[1]
+  n <- dim(x)[2]
+  d <- k-1
+  scorescheck <- matrix(0,n,d)
+currentSphere <- x
+for (i in 1:(d-1)){
+center <- PNSobj$PNS$orthaxis[[i]]
+r <- PNSobj$PNS$dist[i]
+res = ( acos(t(center) %*% currentSphere) - r )
+scorescheck[,d+1-i]<-t(res)*PNSobj$PNS$radii[i]  #rescale by actual radius of (sub)sphere where fit is carried out
+#####
+cur.proj = project.subsphere(x = currentSphere,
+                  center = center, r = r)
+  NestedSphere = rotMat(center) %*% currentSphere
+  currentSphere = NestedSphere[1:(k - i), ]/repmat(matrix(sqrt(1 -
+                  NestedSphere[nrow(NestedSphere), ]^2), nrow = 1),
+                  k - i, 1)
+##############
+  }
+
+    S1toRadian = atan2(currentSphere[2, ], currentSphere[1, ])
+    meantheta = geodmeanS1(S1toRadian)$geodmean
+    meantheta <- PNSobj$PNS$orthaxis[[d]]
+    scorescheck[,1] = (mod(S1toRadian - meantheta + pi, 2 * pi) -
+        pi     )*    PNSobj$PNS$radii[d]  #rescale by actual radius of fitted circle
+    scorescheck
+}
 
 
 
-pcscore2sphere3 <- function (n.pc, X.hat, Xs, Tan, V) {    d = nrow(Tan)    n = ncol(Tan)    W = matrix(NA, d, n)    for (i in 1:n) {        W[, i] =  acos( sum(Xs[i,]*X.hat) ) * Tan[, i]/sqrt(sum(Tan[,             i]^2))    }    lambda = matrix(NA, n, d)    for (i in 1:n) {        for (j in 1:n.pc) {            lambda[i, j] = sum(W[, i] * V[, j])        }    }    U = matrix(0, n, d)    for (i in 1:n) {        for (j in 1:n.pc) {            U[i, ] = U[i, ] + lambda[i, j] * V[, j]        }    }    S.star = matrix(NA, n, n.pc + 1)    for (i in 1:n) {        U.norm = sqrt(sum(U[i, ]^2))        S.star[i, ] = c(cos(U.norm), sin(U.norm)/U.norm * lambda[i,             1:n.pc])    }    return(S.star)}
+pcscore2sphere3 <- 
+function (n.pc, X.hat, Xs, Tan, V) 
+{
+    d = nrow(Tan)
+    n = ncol(Tan)
+    W = matrix(NA, d, n)
+    for (i in 1:n) {
+        W[, i] =  acos( sum(Xs[i,]*X.hat) ) * Tan[, i]/sqrt(sum(Tan[, 
+            i]^2))
+    }
+    lambda = matrix(NA, n, d)
+    for (i in 1:n) {
+        for (j in 1:n.pc) {
+            lambda[i, j] = sum(W[, i] * V[, j])
+        }
+    }
+    U = matrix(0, n, d)
+    for (i in 1:n) {
+        for (j in 1:n.pc) {
+            U[i, ] = U[i, ] + lambda[i, j] * V[, j]
+        }
+    }
+    S.star = matrix(NA, n, n.pc + 1)
+    for (i in 1:n) {
+        U.norm = sqrt(sum(U[i, ]^2))
+        S.star[i, ] = c(cos(U.norm), sin(U.norm)/U.norm * lambda[i, 
+            1:n.pc])
+    }
+    return(S.star)
+}
 
 
-fastpns <- function (x, n.pc = "Full", sphere.type = "seq.test", alpha = 0.1,     R = 100, nlast.small.sphere = 1, output = TRUE, pointcolor = 2) {
+fastpns <- function (x, n.pc = "Full", sphere.type = "seq.test", alpha = 0.1, 
+    R = 100, nlast.small.sphere = 1, output = TRUE, pointcolor = 2) 
+{
     n <- dim(x)[2]
-  pdim <- dim(x)[1]    if (n.pc == "Full") {        n.pc = min(c( pdim-1 , n - 1))    }    Xs <- t(x)    for (i in 1:n) {        Xs[i, ] <- Xs[i, ]/Enorm(Xs[i, ])    }    muhat <- apply(Xs, 2, mean)    muhat <- muhat/Enorm(muhat)    TT <- Xs    for (i in 1:n) {        TT[i, ] <- Xs[i, ] - sum(Xs[i, ] * muhat) * muhat    }    pca <- prcomp(TT)    pcapercent <- sum(pca$sdev[1:n.pc]^2/sum(pca$sdev^2))    cat(c("Initial PNS subsphere dimension", n.pc + 1, "\n"))    cat(c("Percentage of variability in PNS sequence", round(pcapercent *         100, 2), "\n"))    TT <- t(TT)    ans <- pcscore2sphere3(n.pc, muhat, Xs, TT, pca$rotation)
-    Xssubsphere <- t(ans)    out <- pns( (Xssubsphere), sphere.type = sphere.type, alpha = alpha,         R = R, nlast.small.sphere = nlast.small.sphere, output = output,         pointcolor = pointcolor)    out$percent <- out$percent * pcapercent    cat(c("Percent explained by 1st three PNS scores out of total variability:",         "\n", round(out$percent[1:3], 2), "\n"))    out$spheredata <- (Xssubsphere)    out$pca <- pca    out}
+  pdim <- dim(x)[1]
+    if (n.pc == "Full") {
+        n.pc = min(c( pdim-1 , n - 1))
+    }
+    Xs <- t(x)
+    for (i in 1:n) {
+        Xs[i, ] <- Xs[i, ]/Enorm(Xs[i, ])
+    }
+    muhat <- apply(Xs, 2, mean)
+    muhat <- muhat/Enorm(muhat)
+    TT <- Xs
+    for (i in 1:n) {
+        TT[i, ] <- Xs[i, ] - sum(Xs[i, ] * muhat) * muhat
+    }
+    pca <- prcomp(TT)
+    pcapercent <- sum(pca$sdev[1:n.pc]^2/sum(pca$sdev^2))
+    cat(c("Initial PNS subsphere dimension", n.pc + 1, "\n"))
+    cat(c("Percentage of variability in PNS sequence", round(pcapercent * 
+        100, 2), "\n"))
+    TT <- t(TT)
+    ans <- pcscore2sphere3(n.pc, muhat, Xs, TT, pca$rotation)
+    Xssubsphere <- t(ans)
+    out <- pns( (Xssubsphere), sphere.type = sphere.type, alpha = alpha, 
+        R = R, nlast.small.sphere = nlast.small.sphere, output = output, 
+        pointcolor = pointcolor)
+    out$percent <- out$percent * pcapercent
+    cat(c("Percent explained by 1st three PNS scores out of total variability:", 
+        "\n", round(out$percent[1:3], 2), "\n"))
+    out$spheredata <- (Xssubsphere)
+    out$pca <- pca
+    out
+}
 
 
 
@@ -840,7 +930,7 @@ if (output){
   rgl.sphgrid1()
   sphere1.f(col="white",alpha=0.6)
   sphrad <- 0.015
-  spheres3d(-PNS$circlePNS[,2],PNS$circlePNS[,1],PNS$circlePNS[,3],radius=sphrad,col=2+pointcolor)  
+#  spheres3d(-PNS$circlePNS[,2],PNS$circlePNS[,1],PNS$circlePNS[,3],radius=sphrad,col=2+pointcolor)  
   spheres3d(-PNS$spherePNS[,2],PNS$spherePNS[,1],PNS$spherePNS[,3],radius=sphrad,col=pointcolor)
 }
 yy <- orthaxis[[d-1]]
