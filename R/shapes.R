@@ -3,8 +3,8 @@
 # Statistical shape analysis routines
 # written by Ian Dryden in R  (see http://cran.r-project.org)
 # (c) Ian Dryden
-#     UoN, FIU. version 1.2.7
-#                    2003-2023
+#     UoN, FIU, USC. version 1.2.8
+#                    2003-2024
 #
 # Includes contributions by many other authors, including
 #   Mohammad Faghihi, Kwang-Rae Kim, Alfred Kume,
