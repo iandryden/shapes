@@ -930,7 +930,7 @@ if (output){
   rgl.sphgrid1()
   sphere1.f(col="white",alpha=0.6)
   sphrad <- 0.015
-#  spheres3d(-PNS$circlePNS[,2],PNS$circlePNS[,1],PNS$circlePNS[,3],radius=sphrad,col=2+pointcolor)  
+  spheres3d(-PNS$circlePNS[,2],PNS$circlePNS[,1],PNS$circlePNS[,3],radius=sphrad,col="White")  
   spheres3d(-PNS$spherePNS[,2],PNS$spherePNS[,1],PNS$spherePNS[,3],radius=sphrad,col=pointcolor)
 }
 yy <- orthaxis[[d-1]]
