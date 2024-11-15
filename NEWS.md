@@ -4,6 +4,8 @@
 
 fastpns carried out pns but also has an option to first reduce dimension by PCA to n.pc, then fit pns. Useful for high-dimensional data, e.g. dimension > 30.
 
+Added in an option pointcolor so that different colors can be used for the data points on the sphere plot. This is useful for grouped data. 
+
 ## Fixes
 
 Fixed a bug in the plot of the PNS mean in the function pns
