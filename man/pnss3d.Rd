@@ -5,7 +5,11 @@
 2D or 3D data, small or large samples
 }
 \usage{
+<<<<<<< Updated upstream
 pnss3d(x,sphere.type="seq.test",alpha = 0.1,R = 100,
+=======
+pnss3d(x,sphere.type="seq.test",mean.type="Frechet",alpha = 0.1,R = 100,
+>>>>>>> Stashed changes
                         nlast.small.sphere = 1,n.pc="Full",output=TRUE)
 }
 %- maybe also `usage' for other objects documented here.
@@ -25,6 +29,13 @@ specifies BIC statistic to decide either "small" or "great"; and
 specifies Principal Nested GREAT Sphere for the first part and Principal Nested 
 SMALL Sphere for the last part. The default is "seq.test".
 } 
+  \item{mean.type}{
+   a character string specifying the type of circular mean calculation at the last stage.
+"Frechet"
+specifies the Frechet mean on a circle;
+"Fisher"
+specifies the Fisher mle a.k.a. resultant mean.
+  }
   \item{alpha}{significance level (0 < alpha < 1) used when sphere.type = "seq.test". 
   The default is 0.1.
 }

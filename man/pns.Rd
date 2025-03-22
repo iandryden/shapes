@@ -4,7 +4,11 @@
 \description{Calculation of Principal Nested Spheres
 }
 \usage{
+<<<<<<< Updated upstream
 pns(x, sphere.type = "seq.test", alpha = 0.1, R = 100, 
+=======
+pns(x, sphere.type = "seq.test", mean.type="Frechet", alpha = 0.1, R = 100, 
+>>>>>>> Stashed changes
                               nlast.small.sphere = 1, output=TRUE, pointcolor=2)
 }
 %- maybe also `usage' for other objects documented here.
@@ -24,6 +28,13 @@ specifies BIC statistic to decide either "small" or "great"; and
 "bi.sphere"
 specifies Principal Nested GREAT Sphere for the first part and Principal Nested SMALL Sphere for last parts. The default is "seq.test".
 } 
+  \item{mean.type}{
+   a character string specifying the type of circular mean calculation at the last stage.
+"Frechet"
+specifies the Frechet mean on a circle;
+"Fisher"
+specifies the Fisher mle a.k.a. resultant mean.
+  }
   \item{alpha}{significance level (0 < alpha < 1) used when sphere.type = "seq.test". The default is 0.1.
 }
 \item{R}{the number of bootstrap samples to be evaluated for the sequential test. The default is 100.}

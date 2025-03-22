@@ -2,14 +2,25 @@
 
 ## Features
 
+<<<<<<< Updated upstream
 fastpns carried out pns but also has an option to first reduce dimension by PCA to n.pc, then fit pns. Useful for high-dimensional data, e.g. dimension > 30.
 
 Added in an option pointcolor so that different colors can be used for the data points on the sphere plot. This is useful for grouped data. 
+=======
+fastpns carries out pns but also has an option to first reduce dimension by PCA to n.pc, then fit pns. Useful for high-dimensional data, e.g. dimension > 30.
+
+Added an option to pns and pnss3d to choose the mean.type. Previously was Frechet and now can be Fisher if desired. 
+>>>>>>> Stashed changes
 
 ## Fixes
 
 Fixed a bug in the plot of the PNS mean in the function pns
 
+<<<<<<< Updated upstream
+=======
+Included 200 values to search for Frechet mean at last stage, rather than just n (which may be small). Hence this is more accurate. 
+
+>>>>>>> Stashed changes
 # shapes 1.2.7
 
 ## Features
