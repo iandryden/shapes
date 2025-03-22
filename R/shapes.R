@@ -13,7 +13,6 @@
 ###########################################################################
 
 
-
 tangentcoords.partial.inv = function(v, p, R)
 {
   return(matrix(sqrt(1 - sum(v^2)) * c(p) + v, nrow = nrow(p)) %*% t(R))
