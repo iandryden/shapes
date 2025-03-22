@@ -13,6 +13,7 @@
 ###########################################################################
 
 
+
 tangentcoords.partial.inv = function(v, p, R)
 {
   return(matrix(sqrt(1 - sum(v^2)) * c(p) + v, nrow = nrow(p)) %*% t(R))
@@ -835,7 +836,7 @@ if (output){
   
 if (d>1){
 if (output){
-  ### plot points on the 3D sphere (red), with 2D projection (blue)
+  ### plot points on the 3D sphere (pointcolor), with 2D projection (white)
   rgl.sphgrid1()
   sphere1.f(col="white",alpha=0.6)
   sphrad <- 0.015
@@ -860,14 +861,25 @@ lines3d(cc,col=3,lwd=2)
 
 ######   
 if (output){ 
-  lines3d(cc,col=3,lwd=2)
-  sum<-0
-  for (i in 1:n){
-  sum=sum+  ( acos( cc%*%c(-PNS$circlePNS[i,2],PNS$circlePNS[i,1],PNS$circlePNS[i,3])) )**2
-}
-mean0angle<-which.min(sum[1:200])/200*2*pi
-meanpt<- sin(acos(costheta))* ( cos(mean0angle)%*%t(b1) + sin(mean0angle)%*%t(b2) ) +t(centre)
-spheres3d( meanpt, radius=sphrad * 1.5,col=7, alpha=0.8)
+
+#  initial display of gold mean point was using a different calculation from the circle mean above
+#  lines3d(cc,col=3,lwd=2)
+#  sum<-0
+#  for (i in 1:n){
+#  sum=sum+  ( acos( cc%*%c(-PNS$circlePNS[i,2],PNS$circlePNS[i,1],PNS$circlePNS[i,3])) )**2
+#}
+#mean0angle<-which.min(sum[1:200])/200*2*pi
+#meanpt<- sin(acos(costheta))* ( cos(mean0angle)%*%t(b1) + sin(mean0angle)%*%t(b2) ) +t(centre)
+#spheres3d( meanpt, radius=sphrad * 1.5,col=7, alpha=0.8)
+
+# New display is the weighted average of the two closest data points to the circle mean
+# This gives the approximate location of the PNS mean
+
+            jmn <- which.min(resmat[1,]**2) # closest point to the PNS mean
+            meanpt1<- c(-PNS$circlePNS[jmn,                   2], PNS$circlePNS[jmn, 1], PNS$circlePNS[jmn, 3])                      test <- resmat[1,]            test[jmn]<-9999999            jmn2 <- which.min(test**2) #Second closest point to the PNS mean            meanpt2<- c(-PNS$circlePNS[jmn2,                   2], PNS$circlePNS[jmn2, 1], PNS$circlePNS[jmn2, 3])            w1<- resmat[1,jmn]            w2<- resmat[2,jmn2]ww1 <- w1/(w1+w2)            ww2 <- w2/(w1+w2)            meanpt3 <- ww2*meanpt1 + ww1*meanpt2                        meanpt4 <- meanpt3/Enorm(meanpt3)   #Weighted mean                           spheres3d(meanpt4, radius = sphrad * 1.5, col = 7,                 alpha = 0.8)
+
+
+
 }
 ###########
 
