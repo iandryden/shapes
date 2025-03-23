@@ -10,7 +10,7 @@ Added an option to pns and pnss3d to choose the mean.type. Previously was Freche
 
 Fixed a bug in the plot of the PNS mean in the function pns
 
-Included 200 values to search for Frechet mean at last stage, rather than just n (which may be small). Hence this is more accurate. 
+Included more (1000) values to search for Frechet mean at last stage, rather than just n (which may be small). Hence this is more accurate. 
 
 # shapes 1.2.7
 
