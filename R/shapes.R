@@ -878,7 +878,8 @@ spheres3d( meanpt, radius=sphrad * 1.5,col=7, alpha=0.8)
 }
 
 if (mean.type=="Frechet"){ 
-          ddout<-rep(0,times=n)          sum2<-rep(0,times=200)          for (jj in 1:200){                    for (i in 1:n){          ddout[i]<- ( mod( acos( sum( (cc[jj,]-centre)*(c(-PNS$circlePNS[i,2],PNS$circlePNS[i,1],PNS$circlePNS[i,3])-centre) )/R^2),2*pi)  )**2                      }          sum2[jj]<-sum(ddout)          }
+          ddout<-rep(0,times=n)          sum2<-rep(0,times=200)
+R <- sin(acos(costheta))          for (jj in 1:200){                    for (i in 1:n){          ddout[i]<- ( mod( acos( sum( (cc[jj,]-centre)*(c(-PNS$circlePNS[i,2],PNS$circlePNS[i,1],PNS$circlePNS[i,3])-centre) )/R^2),2*pi)  )**2                      }          sum2[jj]<-sum(ddout)          }
             mean0angle <- which.min(sum2[1:200])/200 * 2 * pi            meanpt <- sin(acos(costheta)) * (cos(mean0angle) %*%                 t(b1) + sin(mean0angle) %*% t(b2)) + t(centre)
              spheres3d(meanpt, radius = sphrad * 1.5, col = 7,                 alpha = 0.8)}          
 
