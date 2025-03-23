@@ -862,17 +862,25 @@ lines3d(cc,col=3,lwd=2)
 ######   
 if (output){ 
 
-# Note this display of gold mean point is a different calculation from the circle mean above
+         lines3d(cc,col=3,lwd=2)
 
-  lines3d(cc,col=3,lwd=2)
+# Note this provides a plot of the PNS mean in gold (updated calculation)
+
+
+if (mean.type=="Fisher"){
   sum<-0
   for (i in 1:n){
   sum=sum+  ( acos( cc%*%c(-PNS$circlePNS[i,2],PNS$circlePNS[i,1],PNS$circlePNS[i,3])) )**2
-}
+}   #different PNS mean
 mean0angle<-which.min(sum[1:200])/200*2*pi
 meanpt<- sin(acos(costheta))* ( cos(mean0angle)%*%t(b1) + sin(mean0angle)%*%t(b2) ) +t(centre)
 spheres3d( meanpt, radius=sphrad * 1.5,col=7, alpha=0.8)
+}
 
+if (mean.type=="Frechet"){ 
+          ddout<-rep(0,times=n)          sum2<-rep(0,times=200)          for (jj in 1:200){                    for (i in 1:n){          ddout[i]<- ( mod( acos( sum( (cc[jj,]-centre)*(c(-PNS$circlePNS[i,2],PNS$circlePNS[i,1],PNS$circlePNS[i,3])-centre) )/R^2),2*pi)  )**2                      }          sum2[jj]<-sum(ddout)          }
+            mean0angle <- which.min(sum2[1:200])/200 * 2 * pi            meanpt <- sin(acos(costheta)) * (cos(mean0angle) %*%                 t(b1) + sin(mean0angle) %*% t(b2)) + t(centre)
+             spheres3d(meanpt, radius = sphrad * 1.5, col = 7,                 alpha = 0.8)}          
 
 
 }
@@ -1366,7 +1374,7 @@ geodmeanS1 = function(theta,mean.type="Frechet")
    n = length(theta)
   if (mean.type=="Frechet"){ 
 #kk candidates angles
-   kk <-200
+   kk <-1000
    meancandi = mod(mean(theta) + 2 * pi * (0:(kk - 1)) / kk, 2 * pi)
    theta = mod(theta, 2 * pi)
    geodvar = rep(0, kk)
