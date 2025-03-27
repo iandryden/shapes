@@ -1023,7 +1023,7 @@ sph2car1<-function (long, lat, radius = 1, deg = TRUE)
 
 
 
-pns_biplot<-function(pns, varnames){  pns1<-pns  nd <- dim(pns$resmat)[1]+1palette(rainbow(nd))res1 <- cbind( c( (20:(-20))/10*sd( pns1$resmat[1,])) , matrix(0,41,nd-2) )if (nd>3){res2 <- cbind( cbind( matrix(0,41,1) , c( (20:(-20))/10*sd( pns1$resmat[2,])) ) , matrix(0,41,nd-3) )}else{  res2 <- cbind( cbind( matrix(0,41,1) , c( (20:(-20))/10*sd( pns1$resmat[2,])) )  )}aa1 <- PNSe2s( t(res1) , pns1$PNS ) -pns1$PNS$meanaa2 <- PNSe2s( t(res2) , pns1$PNS ) -pns1$PNS$meanplot(aa1[1,],aa2[1,],xlim=c( min(aa1),max(aa1)) , type="n", col=2,  ylim=c(min(aa2),max(aa2)) ,xlab="PNS1", ylab="PNS2")for (i in 1:(nd)){  lines(aa1[i,],aa2[i,],col=i)arrows( aa1[i,2],aa2[i,2],aa1[i,1],aa2[i,1],col=i)text( aa1[i,1],aa2[i,1], varnames[i],col=i,cex=1)}title("PNS biplot")palette("default")}
+pns_biplot<-function(pns, varnames=rownames(q)){  pns1<-pns  nd <- dim(pns$resmat)[1]+1palette(rainbow(nd))res1 <- cbind( c( (20:(-20))/10*sd( pns1$resmat[1,])) , matrix(0,41,nd-2) )if (nd>3){res2 <- cbind( cbind( matrix(0,41,1) , c( (20:(-20))/10*sd( pns1$resmat[2,])) ) , matrix(0,41,nd-3) )}else{  res2 <- cbind( cbind( matrix(0,41,1) , c( (20:(-20))/10*sd( pns1$resmat[2,])) )  )}aa1 <- PNSe2s( t(res1) , pns1$PNS ) -pns1$PNS$meanaa2 <- PNSe2s( t(res2) , pns1$PNS ) -pns1$PNS$meanplot(aa1[1,],aa2[1,],xlim=c( min(aa1),max(aa1)) , type="n", col=2,  ylim=c(min(aa2),max(aa2)) ,xlab="PNS1", ylab="PNS2")for (i in 1:(nd)){  lines(aa1[i,],aa2[i,],col=i)arrows( aa1[i,2],aa2[i,2],aa1[i,1],aa2[i,1],col=i)text( aa1[i,1],aa2[i,1], varnames[i],col=i,cex=1)}title("PNS biplot")palette("default")}
 
 
 
