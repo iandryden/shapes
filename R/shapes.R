@@ -345,7 +345,9 @@ pcscore2sphere3 <- function (n.pc, X.hat, Xs, Tan, V) {    d = nrow(Tan)    
 fastpns <- function (x, n.pc = "Full", sphere.type = "seq.test", mean.type="Frechet", alpha = 0.1,     R = 100, nlast.small.sphere = 1, output = TRUE, pointcolor = 2) {
     n <- dim(x)[2]
   pdim <- dim(x)[1]    if (n.pc == "Full") {        n.pc = min(c( pdim-1 , n - 1))    }    Xs <- t(x)    for (i in 1:n) {        Xs[i, ] <- Xs[i, ]/Enorm(Xs[i, ])    }    muhat <- apply(Xs, 2, mean)    muhat <- muhat/Enorm(muhat)    TT <- Xs    for (i in 1:n) {        TT[i, ] <- Xs[i, ] - sum(Xs[i, ] * muhat) * muhat    }    pca <- prcomp(TT)    pcapercent <- sum(pca$sdev[1:n.pc]^2/sum(pca$sdev^2))    cat(c("Initial PNS subsphere dimension", n.pc + 1, "\n"))    cat(c("Percentage of variability in PNS sequence", round(pcapercent *         100, 2), "\n"))    TT <- t(TT)    ans <- pcscore2sphere3(n.pc, muhat, Xs, TT, pca$rotation)
-    Xssubsphere <- t(ans)    out <- pns( (Xssubsphere), sphere.type = sphere.type, mean.type=mean.type, alpha = alpha,         R = R, nlast.small.sphere = nlast.small.sphere, output = output,         pointcolor = pointcolor)    out$percent <- out$percent * pcapercent    cat(c("Percent explained by 1st three PNS scores out of total variability:",         "\n", round(out$percent[1:3], 2), "\n"))    out$spheredata <- (Xssubsphere)    out$pca <- pca    out}
+    Xssubsphere <- t(ans)    out <- pns( (Xssubsphere), sphere.type = sphere.type, mean.type=mean.type, alpha = alpha,         R = R, nlast.small.sphere = nlast.small.sphere, output = output,         pointcolor = pointcolor)    out$percent <- out$percent * pcapercent    cat(c("Percent explained by 1st three PNS scores out of total variability:",         "\n", round(out$percent[1:3], 2), "\n"))    out$spheredata <- (Xssubsphere)    out$pca <- pca
+    out$muhat <- muhat
+    out$n.pc <- n.pc    out}
 
 
 
@@ -1023,7 +1025,7 @@ sph2car1<-function (long, lat, radius = 1, deg = TRUE)
 
 
 
-pns_biplot<-function(pns, varnames=rownames(q)){  pns1<-pns  nd <- dim(pns$resmat)[1]+1palette(rainbow(nd))res1 <- cbind( c( (20:(-20))/10*sd( pns1$resmat[1,])) , matrix(0,41,nd-2) )if (nd>3){res2 <- cbind( cbind( matrix(0,41,1) , c( (20:(-20))/10*sd( pns1$resmat[2,])) ) , matrix(0,41,nd-3) )}else{  res2 <- cbind( cbind( matrix(0,41,1) , c( (20:(-20))/10*sd( pns1$resmat[2,])) )  )}aa1 <- PNSe2s( t(res1) , pns1$PNS ) -pns1$PNS$meanaa2 <- PNSe2s( t(res2) , pns1$PNS ) -pns1$PNS$meanplot(aa1[1,],aa2[1,],xlim=c( min(aa1),max(aa1)) , type="n", col=2,  ylim=c(min(aa2),max(aa2)) ,xlab="PNS1", ylab="PNS2")for (i in 1:(nd)){  lines(aa1[i,],aa2[i,],col=i)arrows( aa1[i,2],aa2[i,2],aa1[i,1],aa2[i,1],col=i)text( aa1[i,1],aa2[i,1], varnames[i],col=i,cex=1)}title("PNS biplot")palette("default")}
+pns_biplot<-function(pns, varnames=rownames(q) ){  pns1<-pns  nd <- dim(pns$resmat)[1]+1palette(rainbow(nd))res1 <- cbind( c( (20:(-20))/10*sd( pns1$resmat[1,])) , matrix(0,41,nd-2) )if (nd>3){res2 <- cbind( cbind( matrix(0,41,1) , c( (20:(-20))/10*sd( pns1$resmat[2,])) ) , matrix(0,41,nd-3) )}else{  res2 <- cbind( cbind( matrix(0,41,1) , c( (20:(-20))/10*sd( pns1$resmat[2,])) )  )}aa1 <- PNSe2s( t(res1) , pns1$PNS ) -pns1$PNS$meanaa2 <- PNSe2s( t(res2) , pns1$PNS ) -pns1$PNS$meanplot(aa1[1,],aa2[1,],xlim=c( min(aa1),max(aa1)) , type="n", col=2,  ylim=c(min(aa2),max(aa2)) ,xlab="PNS1", ylab="PNS2")for (i in 1:(nd)){  lines(aa1[i,],aa2[i,],col=i)arrows( aa1[i,2],aa2[i,2],aa1[i,1],aa2[i,1],col=i)text( aa1[i,1],aa2[i,1], varnames[i],col=i,cex=1)}title("PNS biplot")palette("default")}
 
 
 
