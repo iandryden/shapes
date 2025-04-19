@@ -351,6 +351,8 @@ fastpns <- function (x, n.pc = "Full", sphere.type = "seq.test", mean.type="Frec
 
 
 
+fastPNSe2s <- function( res , pns ){  out<-pnsGG <- PNSe2s( res , out$PNS )n<-dim(GG)[2]muhat <- pns$muhatn.pc <- pns$n.pc### now work out the PC scores for the original high-dimensional coordinatess<-acos( GG[1,] )HH <- diag(s/sin(s))%*%t(GG[2:(n.pc+1),])ones<-rep(1,times=n)#Preferred approx back on sphere (it is unit size) #This is exact if n.pc = "Full"approx1 <- t(GG[2:(n.pc+1),])%*%t(out$pca$rotation[,1:(n.pc)])+diag(cos(s) )%*%ones%*%t(muhat)/Enorm(muhat)approx1}fastpns_biplot<-function(pns, varnames){  pns1<-pns  nd <- dim(pns$resmat)[1]+1  ndhigh<-length(pns$muhat)palette(rainbow(min(ndhigh,1024)))res1 <- cbind( c( (20:(-20))/10*sd( pns1$resmat[1,])) , matrix(0,41,nd-2) )if (nd>3){res2 <- cbind( cbind( matrix(0,41,1) , c( (20:(-20))/10*sd( pns1$resmat[2,])) ) , matrix(0,41,nd-3) )}if (nd <= 3){  res2 <- cbind( cbind( matrix(0,41,1) , c( (20:(-20))/10*sd( pns1$resmat[2,])) )  )}mshape <- fastPNSe2s( t(res1)*0 , pns1 )aa1 <- fastPNSe2s( t(res1) , pns1 ) -mshapeaa2 <- fastPNSe2s( t(res2) , pns1 ) -mshapenl<- dim(aa1)[1]aa1<-t(aa1)aa2<-t(aa2)plot(aa1[1,],aa2[1,],xlim=c( min(aa1),max(aa1)) , type="n", col=2,  ylim=c(min(aa2),max(aa2)) ,xlab="PNS1", ylab="PNS2")for (i in 1:(ndhigh)){  lines(aa1[i,],aa2[i,],col=i)arrows( aa1[i,2],aa2[i,2],aa1[i,1],aa2[i,1],col=i)text( aa1[i,1],aa2[i,1], varnames[i],col=i,cex=1)}title("fast PNS biplot")palette("default")}
+
 
 #==================================================================================
 # PNS  The Principal Nested Spheres code (PNS) for spheres and shapes has

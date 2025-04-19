@@ -1,4 +1,6 @@
 \name{shapes-internal}
+\alias{fastPNSe2s}
+\alias{fastpns_biplot}
 \alias{pns_biplot}
 \alias{pcscore2sphere3}
 \alias{projectPNS}
