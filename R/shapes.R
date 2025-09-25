@@ -335,23 +335,160 @@ xout
 
 
 projectPNS <- function( x , PNS){
-#obtain the PNS scores for new spherical data with respect to a PNS object  PNSobj <- PNS  x<-as.matrix(x)  k <- dim(x)[1]  n <- dim(x)[2]  d <- k-1  scorescheck <- matrix(0,n,d)currentSphere <- xfor (i in 1:(d-1)){center <- PNSobj$PNS$orthaxis[[i]]r <- PNSobj$PNS$dist[i]res = ( acos(t(center) %*% currentSphere) - r )scorescheck[,d+1-i]<-t(res)*PNSobj$PNS$radii[i]  #rescale by actual radius of (sub)sphere where fit is carried out#####cur.proj = project.subsphere(x = currentSphere,                  center = center, r = r)  NestedSphere = rotMat(center) %*% currentSphere  currentSphere = NestedSphere[1:(k - i), ]/repmat(matrix(sqrt(1 -                  NestedSphere[nrow(NestedSphere), ]^2), nrow = 1),                  k - i, 1)##############  }    S1toRadian = atan2(currentSphere[2, ], currentSphere[1, ])#    meantheta = geodmeanS1(S1toRadian)$geodmean    meantheta <- PNSobj$PNS$orthaxis[[d]]    scorescheck[,1] = (mod(S1toRadian - meantheta + pi, 2 * pi) -        pi     )*    PNSobj$PNS$radii[d]  #rescale by actual radius of fitted circle    scorescheck}
+#obtain the PNS scores for new spherical data with respect to a PNS object
+  PNSobj <- PNS
+  x<-as.matrix(x)
+  k <- dim(x)[1]
+  n <- dim(x)[2]
+  d <- k-1
+  scorescheck <- matrix(0,n,d)
+currentSphere <- x
+for (i in 1:(d-1)){
+center <- PNSobj$PNS$orthaxis[[i]]
+r <- PNSobj$PNS$dist[i]
+res = ( acos(t(center) %*% currentSphere) - r )
+scorescheck[,d+1-i]<-t(res)*PNSobj$PNS$radii[i]  #rescale by actual radius of (sub)sphere where fit is carried out
+#####
+cur.proj = project.subsphere(x = currentSphere,
+                  center = center, r = r)
+  NestedSphere = rotMat(center) %*% currentSphere
+  currentSphere = NestedSphere[1:(k - i), ]/repmat(matrix(sqrt(1 -
+                  NestedSphere[nrow(NestedSphere), ]^2), nrow = 1),
+                  k - i, 1)
+##############
+  }
+
+    S1toRadian = atan2(currentSphere[2, ], currentSphere[1, ])
+#    meantheta = geodmeanS1(S1toRadian)$geodmean
+    meantheta <- PNSobj$PNS$orthaxis[[d]]
+    scorescheck[,1] = (mod(S1toRadian - meantheta + pi, 2 * pi) -
+        pi     )*    PNSobj$PNS$radii[d]  #rescale by actual radius of fitted circle
+    scorescheck
+}
 
 
 
-pcscore2sphere3 <- function (n.pc, X.hat, Xs, Tan, V) {    d = nrow(Tan)    n = ncol(Tan)    W = matrix(NA, d, n)    for (i in 1:n) {        W[, i] =  acos( sum(Xs[i,]*X.hat) ) * Tan[, i]/sqrt(sum(Tan[,             i]^2))    }    lambda = matrix(NA, n, d)    for (i in 1:n) {        for (j in 1:n.pc) {            lambda[i, j] = sum(W[, i] * V[, j])        }    }    U = matrix(0, n, d)    for (i in 1:n) {        for (j in 1:n.pc) {            U[i, ] = U[i, ] + lambda[i, j] * V[, j]        }    }    S.star = matrix(NA, n, n.pc + 1)    for (i in 1:n) {        U.norm = sqrt(sum(U[i, ]^2))        S.star[i, ] = c(cos(U.norm), sin(U.norm)/U.norm * lambda[i,             1:n.pc])    }    return(S.star)}
+pcscore2sphere3 <- 
+function (n.pc, X.hat, Xs, Tan, V) 
+{
+    d = nrow(Tan)
+    n = ncol(Tan)
+    W = matrix(NA, d, n)
+    for (i in 1:n) {
+        W[, i] =  acos( sum(Xs[i,]*X.hat) ) * Tan[, i]/sqrt(sum(Tan[, 
+            i]^2))
+    }
+    lambda = matrix(NA, n, d)
+    for (i in 1:n) {
+        for (j in 1:n.pc) {
+            lambda[i, j] = sum(W[, i] * V[, j])
+        }
+    }
+    U = matrix(0, n, d)
+    for (i in 1:n) {
+        for (j in 1:n.pc) {
+            U[i, ] = U[i, ] + lambda[i, j] * V[, j]
+        }
+    }
+    S.star = matrix(NA, n, n.pc + 1)
+    for (i in 1:n) {
+        U.norm = sqrt(sum(U[i, ]^2))
+        S.star[i, ] = c(cos(U.norm), sin(U.norm)/U.norm * lambda[i, 
+            1:n.pc])
+    }
+    return(S.star)
+}
 
 
-fastpns <- function (x, n.pc = "Full", sphere.type = "seq.test", mean.type="Frechet", alpha = 0.1,     R = 100, nlast.small.sphere = 1, output = TRUE, pointcolor = 2) {
+fastpns <- function (x, n.pc = "Full", sphere.type = "seq.test", mean.type="Frechet", alpha = 0.1, 
+    R = 100, nlast.small.sphere = 1, output = TRUE, pointcolor = 2) 
+{
     n <- dim(x)[2]
-  pdim <- dim(x)[1]    if (n.pc == "Full") {        n.pc = min(c( pdim-1 , n - 1))    }    Xs <- t(x)    for (i in 1:n) {        Xs[i, ] <- Xs[i, ]/Enorm(Xs[i, ])    }    muhat <- apply(Xs, 2, mean)    muhat <- muhat/Enorm(muhat)    TT <- Xs    for (i in 1:n) {        TT[i, ] <- Xs[i, ] - sum(Xs[i, ] * muhat) * muhat    }    pca <- prcomp(TT)    pcapercent <- sum(pca$sdev[1:n.pc]^2/sum(pca$sdev^2))    cat(c("Initial PNS subsphere dimension", n.pc + 1, "\n"))    cat(c("Percentage of variability in PNS sequence", round(pcapercent *         100, 2), "\n"))    TT <- t(TT)    ans <- pcscore2sphere3(n.pc, muhat, Xs, TT, pca$rotation)
-    Xssubsphere <- t(ans)    out <- pns( (Xssubsphere), sphere.type = sphere.type, mean.type=mean.type, alpha = alpha,         R = R, nlast.small.sphere = nlast.small.sphere, output = output,         pointcolor = pointcolor)    out$percent <- out$percent * pcapercent    cat(c("Percent explained by 1st three PNS scores out of total variability:",         "\n", round(out$percent[1:3], 2), "\n"))    out$spheredata <- (Xssubsphere)    out$pca <- pca
+  pdim <- dim(x)[1]
+    if (n.pc == "Full") {
+        n.pc = min(c( pdim-1 , n - 1))
+    }
+    Xs <- t(x)
+    for (i in 1:n) {
+        Xs[i, ] <- Xs[i, ]/Enorm(Xs[i, ])
+    }
+    muhat <- apply(Xs, 2, mean)
+    muhat <- muhat/Enorm(muhat)
+    TT <- Xs
+    for (i in 1:n) {
+        TT[i, ] <- Xs[i, ] - sum(Xs[i, ] * muhat) * muhat
+    }
+    pca <- prcomp(TT)
+    pcapercent <- sum(pca$sdev[1:n.pc]^2/sum(pca$sdev^2))
+    cat(c("Initial PNS subsphere dimension", n.pc + 1, "\n"))
+    cat(c("Percentage of variability in PNS sequence", round(pcapercent * 
+        100, 2), "\n"))
+    TT <- t(TT)
+    ans <- pcscore2sphere3(n.pc, muhat, Xs, TT, pca$rotation)
+    Xssubsphere <- t(ans)
+    out <- pns( (Xssubsphere), sphere.type = sphere.type, mean.type=mean.type, alpha = alpha, 
+        R = R, nlast.small.sphere = nlast.small.sphere, output = output, 
+        pointcolor = pointcolor)
+    out$percent <- out$percent * pcapercent
+    cat(c("Percent explained by 1st three PNS scores out of total variability:", 
+        "\n", round(out$percent[1:3], 2), "\n"))
+    out$spheredata <- (Xssubsphere)
+    out$pca <- pca
     out$muhat <- muhat
-    out$n.pc <- n.pc    out}
+    out$n.pc <- n.pc
+    out
+}
 
 
 
-fastPNSe2s <- function( res , pns ){  out<-pnsGG <- PNSe2s( res , out$PNS )n<-dim(GG)[2]muhat <- pns$muhatn.pc <- pns$n.pc### now work out the PC scores for the original high-dimensional coordinatess<-acos( GG[1,] )HH <- diag(s/sin(s))%*%t(GG[2:(n.pc+1),])ones<-rep(1,times=n)#Preferred approx back on sphere (it is unit size) #This is exact if n.pc = "Full"approx1 <- t(GG[2:(n.pc+1),])%*%t(out$pca$rotation[,1:(n.pc)])+diag(cos(s) )%*%ones%*%t(muhat)/Enorm(muhat)approx1}fastpns_biplot<-function(pns, varnames){  pns1<-pns  nd <- dim(pns$resmat)[1]+1  ndhigh<-length(pns$muhat)palette(rainbow(min(ndhigh,1024)))res1 <- cbind( c( (20:(-20))/10*sd( pns1$resmat[1,])) , matrix(0,41,nd-2) )if (nd>3){res2 <- cbind( cbind( matrix(0,41,1) , c( (20:(-20))/10*sd( pns1$resmat[2,])) ) , matrix(0,41,nd-3) )}if (nd <= 3){  res2 <- cbind( cbind( matrix(0,41,1) , c( (20:(-20))/10*sd( pns1$resmat[2,])) )  )}mshape <- fastPNSe2s( t(res1)*0 , pns1 )aa1 <- fastPNSe2s( t(res1) , pns1 ) -mshapeaa2 <- fastPNSe2s( t(res2) , pns1 ) -mshapenl<- dim(aa1)[1]aa1<-t(aa1)aa2<-t(aa2)plot(aa1[1,],aa2[1,],xlim=c( min(aa1),max(aa1)) , type="n", col=2,  ylim=c(min(aa2),max(aa2)) ,xlab="PNS1", ylab="PNS2")for (i in 1:(ndhigh)){  lines(aa1[i,],aa2[i,],col=i)arrows( aa1[i,2],aa2[i,2],aa1[i,1],aa2[i,1],col=i)text( aa1[i,1],aa2[i,1], varnames[i],col=i,cex=1)}title("fast PNS biplot")palette("default")}
+fastPNSe2s <- function( res , pns ){
+  out<-pns
+GG <- PNSe2s( res , out$PNS )
+n<-dim(GG)[2]
+muhat <- pns$muhat
+n.pc <- pns$n.pc
+### now work out the PC scores for the original high-dimensional coordinates
+
+s<-acos( GG[1,] )
+HH <- diag(s/sin(s))%*%t(GG[2:(n.pc+1),])
+ones<-rep(1,times=n)
+#Preferred approx back on sphere (it is unit size) 
+#This is exact if n.pc = "Full"
+approx1 <- t(GG[2:(n.pc+1),])%*%t(out$pca$rotation[,1:(n.pc)])+diag(cos(s) )%*%ones%*%t(muhat)/Enorm(muhat)
+
+approx1
+}
+
+
+
+fastpns_biplot<-function(pns, varnames){
+  pns1<-pns
+  nd <- dim(pns$resmat)[1]+1
+  ndhigh<-length(pns$muhat)
+palette(rainbow(min(ndhigh,1024)))
+res1 <- cbind( c( (20:(-20))/10*sd( pns1$resmat[1,])) , matrix(0,41,nd-2) )
+if (nd>3){
+res2 <- cbind( cbind( matrix(0,41,1) , c( (20:(-20))/10*sd( pns1$resmat[2,])) ) , matrix(0,41,nd-3) )
+}
+if (nd <= 3)
+{
+  res2 <- cbind( cbind( matrix(0,41,1) , c( (20:(-20))/10*sd( pns1$resmat[2,])) )  )
+}
+mshape <- fastPNSe2s( t(res1)*0 , pns1 )
+aa1 <- fastPNSe2s( t(res1) , pns1 ) -mshape
+aa2 <- fastPNSe2s( t(res2) , pns1 ) -mshape
+nl<- dim(aa1)[1]
+aa1<-t(aa1)
+aa2<-t(aa2)
+plot(aa1[1,],aa2[1,],xlim=c( min(aa1),max(aa1)) , type="n", col=2,  ylim=c(min(aa2),max(aa2)) ,xlab="PNS1", ylab="PNS2")
+for (i in 1:(ndhigh)){
+  lines(aa1[i,],aa2[i,],col=i)
+arrows( aa1[i,2],aa2[i,2],aa1[i,1],aa2[i,1],col=i)
+text( aa1[i,1],aa2[i,1], varnames[i],col=i,cex=1)
+}
+title("fast PNS biplot")
+palette("default")
+}
 
 
 #==================================================================================
@@ -365,7 +502,8 @@ pns = function(x,
                sphere.type = "seq.test", mean.type="Frechet", 
                alpha = 0.1,
                R = 100,
-               nlast.small.sphere = 1, output=TRUE , pointcolor=2)
+               nlast.small.sphere = 1, output=TRUE , pointcolor=2,
+               distr="normal", penalty=0)
 {
   n = ncol(x)
   k = nrow(x)
@@ -623,7 +761,232 @@ if (output){
       #############################
       
     }
-  } else if (sphere.type == "small" | sphere.type == "great") {
+  } 
+  
+  ##############################
+  else if (sphere.type == "distr") {
+    if (output) {
+      cat(" .. with data distr \n")
+    }
+    for (i in (nullspdim + 1):(d - 1)) {
+      sp = getSubSphere(x = currentSphere, geodesic = "small")
+      center.s = sp$center
+      r.s = sp$r
+      resSMALL = c( acos(t(center.s) %*% currentSphere) - 
+                      r.s )
+      sp = getSubSphere(x = currentSphere, geodesic = "great")
+      center.g = sp$center
+      r.g = sp$r
+      resGREAT = c( acos(t(center.g) %*% currentSphere) - 
+                      r.g )
+      
+      if (distr=="normal"){
+        #### normal case
+        NEWsmall = n * log(mean(abs(resSMALL)**2)) + (d - i + 1 + 
+                                                        1) * log(n) + penalty*( r.s - r.g)**2
+        NEWgreat = n * log(mean(abs(resGREAT)**2)) + (d - i + 1) * 
+          log(n)
+        #           qqnorm(resSMALL)
+        #           qqnorm(resGREAT)
+      }
+      else
+      {
+        outtem1 <- mledist( abs(c(resSMALL)) , distr=distr )
+        outtem2 <- mledist( abs(c(resGREAT)) , distr=distr )
+        mx<- max( c(abs(resSMALL), abs(resGREAT) ))
+        #           plot( density(abs(c(resSMALL))), xlim=c(0,mx) , main = " ")
+        #           lines( density(abs(c(resGREAT))) , col=2 )
+        #           print(distr)
+        distr0<-distr
+        
+        if (distr=="exp"){
+          #              probPlot(abs( resSMALL ) , distr="exponential", plots="QQ")
+          #              probPlot(abs( resGREAT) , distr="exponential", plots="QQ")
+        }
+        if (distr=="weibull"){
+          #             probPlot(abs( resSMALL ) , distr="weibull", plots="QQ")
+          #             probPlot(abs( resGREAT) , distr="weibull", plots="QQ")
+        }
+        if (distr=="lnorm"){
+          #            probPlot(abs( resSMALL ) , distr="lognormal", plots="QQ")
+          #             probPlot(abs( resGREAT) , distr="lognormal", plots="QQ")
+        }
+        ###### more general
+        NEWsmall = -2*outtem1$loglik + (d - i + 1 + 
+                                          1) * log(n) + penalty*( r.s - r.g)**2
+        NEWgreat = -2*outtem2$loglik + (d - i + 1) * 
+          log(n)
+      }
+      
+      
+      if (output) {
+        cat("NEWsm: ", NEWsmall, ", NEWgr: ", NEWgreat, 
+            "\n", sep = "")
+      }
+      if (NEWsmall > NEWgreat) {
+        center = center.g
+        r = r.g
+        if (output) {
+          cat(d - i + 1, "-sphere to ", d - i, "-sphere, by ", 
+              "GREAT sphere,  \n", sep = "")
+        }
+      }
+      else {
+        center = center.s
+        r = r.s
+        if (output) {
+          cat(d - i + 1, "-sphere to ", d - i, "-sphere, by ", 
+              "SMALL sphere,  \n", sep = "")
+        }
+      }
+      res = acos(t(center) %*% currentSphere) - r
+      orthaxis[[i]] = center
+      dist[i] = r
+      resmat[i, ] = res
+      cur.proj = project.subsphere(x = currentSphere, center = center, 
+                                   r = r)
+      NestedSphere = rotMat(center) %*% currentSphere
+      currentSphere = NestedSphere[1:(k - i), ]/repmat(matrix(sqrt(1 - 
+                                                                     NestedSphere[nrow(NestedSphere), ]^2), nrow = 1), 
+                                                       k - i, 1)
+      if (nrow(currentSphere) == 3) {
+        PNS$spherePNS = t(currentSphere)
+      }
+      if (nrow(currentSphere) == 2) {
+        PNS$circlePNS = t(cur.proj)
+      }
+    }
+  }
+  
+  else if (sphere.type == "ks.test") {
+    if (output) {
+      cat(" .. with ks.test \n")
+    }
+    for (i in (nullspdim + 1):(d - 1)) {
+      sp = getSubSphere(x = currentSphere, geodesic = "small")
+      center.s = sp$center
+      r.s = sp$r
+      resSMALL = c( acos(t(center.s) %*% currentSphere) - 
+                      r.s )
+      sp = getSubSphere(x = currentSphere, geodesic = "great")
+      center.g = sp$center
+      r.g = sp$r
+      resGREAT = c( acos(t(center.g) %*% currentSphere) - 
+                      r.g )
+      
+      mx<- max( c(abs(resSMALL), abs(resGREAT) ))
+      #            plot( density(abs(c(resSMALL))), xlim=c(0,mx) , main =" ")
+      #            lines( density(abs(c(resGREAT))) , col=2 )
+      
+      out <- ks.test ( resSMALL, resGREAT )
+      
+      
+      
+      if ( out$p.value > 0.1 ) {
+        center = center.g
+        r = r.g
+        if (output) {
+          cat(d - i + 1, "-sphere to ", d - i, "-sphere, by ", 
+              "GREAT sphere,  \n", sep = "")
+        }
+      }
+      else {
+        center = center.s
+        r = r.s
+        if (output) {
+          cat(d - i + 1, "-sphere to ", d - i, "-sphere, by ", 
+              "SMALL sphere,  \n", sep = "")
+        }
+      }
+      res = acos(t(center) %*% currentSphere) - r
+      orthaxis[[i]] = center
+      dist[i] = r
+      resmat[i, ] = res
+      cur.proj = project.subsphere(x = currentSphere, center = center, 
+                                   r = r)
+      NestedSphere = rotMat(center) %*% currentSphere
+      currentSphere = NestedSphere[1:(k - i), ]/repmat(matrix(sqrt(1 - 
+                                                                     NestedSphere[nrow(NestedSphere), ]^2), nrow = 1), 
+                                                       k - i, 1)
+      if (nrow(currentSphere) == 3) {
+        PNS$spherePNS = t(currentSphere)
+      }
+      if (nrow(currentSphere) == 2) {
+        PNS$circlePNS = t(cur.proj)
+      }
+    }
+  }
+  
+  ######
+  
+  else if (sphere.type == "var.test") {
+    if (output) {
+      cat(" .. with var.test \n")
+    }
+    for (i in (nullspdim + 1):(d - 1)) {
+      sp = getSubSphere(x = currentSphere, geodesic = "small")
+      center.s = sp$center
+      r.s = sp$r
+      resSMALL = c( acos(t(center.s) %*% currentSphere) - 
+                      r.s )
+      sp = getSubSphere(x = currentSphere, geodesic = "great")
+      center.g = sp$center
+      r.g = sp$r
+      resGREAT = c( acos(t(center.g) %*% currentSphere) - 
+                      r.g )
+      
+      mx<- max( c(abs(resSMALL), abs(resGREAT) ))
+      #            plot( density(abs(c(resSMALL))), xlim=c(0,mx) , main =" ")
+      #            lines( density(abs(c(resGREAT))) , col=2 )
+      
+      out <- var.test ( resSMALL, resGREAT )
+      
+      
+      if ( out$p.value > 0.1 ) {
+        center = center.g
+        r = r.g
+        if (output) {
+          cat(d - i + 1, "-sphere to ", d - i, "-sphere, by ", 
+              "GREAT sphere,  \n", sep = "")
+        }
+      }
+      else {
+        center = center.s
+        r = r.s
+        if (output) {
+          cat(d - i + 1, "-sphere to ", d - i, "-sphere, by ", 
+              "SMALL sphere,  \n", sep = "")
+        }
+      }
+      res = acos(t(center) %*% currentSphere) - r
+      orthaxis[[i]] = center
+      dist[i] = r
+      resmat[i, ] = res
+      cur.proj = project.subsphere(x = currentSphere, center = center, 
+                                   r = r)
+      NestedSphere = rotMat(center) %*% currentSphere
+      currentSphere = NestedSphere[1:(k - i), ]/repmat(matrix(sqrt(1 - 
+                                                                     NestedSphere[nrow(NestedSphere), ]^2), nrow = 1), 
+                                                       k - i, 1)
+      if (nrow(currentSphere) == 3) {
+        PNS$spherePNS = t(currentSphere)
+      }
+      if (nrow(currentSphere) == 2) {
+        PNS$circlePNS = t(cur.proj)
+      }
+    }
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  else if (sphere.type == "small" | sphere.type == "great") {
     pvalues = NaN
     for (i in (nullspdim + 1):(d - 1))
     {
@@ -882,10 +1245,21 @@ spheres3d( meanpt, radius=sphrad * 1.5,col=7, alpha=0.8)
 }
 
 if (mean.type=="Frechet"){ 
-          ddout<-rep(0,times=n)          sum2<-rep(0,times=200)
-R <- sin(acos(costheta))          for (jj in 1:200){                    for (i in 1:n){          ddout[i]<- ( mod( acos( sum( (cc[jj,]-centre)*(c(-PNS$circlePNS[i,2],PNS$circlePNS[i,1],PNS$circlePNS[i,3])-centre) )/R^2),2*pi)  )**2                      }          sum2[jj]<-sum(ddout)          }
-            mean0angle <- which.min(sum2[1:200])/200 * 2 * pi            meanpt <- sin(acos(costheta)) * (cos(mean0angle) %*%                 t(b1) + sin(mean0angle) %*% t(b2)) + t(centre)
-             spheres3d(meanpt, radius = sphrad * 1.5, col = 7,                 alpha = 0.8)}          
+          ddout<-rep(0,times=n)
+          sum2<-rep(0,times=200)
+R <- sin(acos(costheta))
+          for (jj in 1:200){
+                    for (i in 1:n){
+          ddout[i]<- ( mod( acos( sum( (cc[jj,]-centre)*(c(-PNS$circlePNS[i,2],PNS$circlePNS[i,1],PNS$circlePNS[i,3])-centre) )/R^2),2*pi)  )**2
+                      }
+          sum2[jj]<-sum(ddout)
+          }
+            mean0angle <- which.min(sum2[1:200])/200 * 2 * pi
+            meanpt <- sin(acos(costheta)) * (cos(mean0angle) %*% 
+                t(b1) + sin(mean0angle) %*% t(b2)) + t(centre)
+             spheres3d(meanpt, radius = sphrad * 1.5, col = 7, 
+                alpha = 0.8)
+}          
 
 
 }
@@ -1027,7 +1401,29 @@ sph2car1<-function (long, lat, radius = 1, deg = TRUE)
 
 
 
-pns_biplot<-function(pns, varnames=rownames(q) ){  pns1<-pns  nd <- dim(pns$resmat)[1]+1palette(rainbow(nd))res1 <- cbind( c( (20:(-20))/10*sd( pns1$resmat[1,])) , matrix(0,41,nd-2) )if (nd>3){res2 <- cbind( cbind( matrix(0,41,1) , c( (20:(-20))/10*sd( pns1$resmat[2,])) ) , matrix(0,41,nd-3) )}else{  res2 <- cbind( cbind( matrix(0,41,1) , c( (20:(-20))/10*sd( pns1$resmat[2,])) )  )}aa1 <- PNSe2s( t(res1) , pns1$PNS ) -pns1$PNS$meanaa2 <- PNSe2s( t(res2) , pns1$PNS ) -pns1$PNS$meanplot(aa1[1,],aa2[1,],xlim=c( min(aa1),max(aa1)) , type="n", col=2,  ylim=c(min(aa2),max(aa2)) ,xlab="PNS1", ylab="PNS2")for (i in 1:(nd)){  lines(aa1[i,],aa2[i,],col=i)arrows( aa1[i,2],aa2[i,2],aa1[i,1],aa2[i,1],col=i)text( aa1[i,1],aa2[i,1], varnames[i],col=i,cex=1)}title("PNS biplot")palette("default")}
+pns_biplot<-function(pns, varnames=rownames(q) ){
+  pns1<-pns
+  nd <- dim(pns$resmat)[1]+1
+palette(rainbow(nd))
+res1 <- cbind( c( (20:(-20))/10*sd( pns1$resmat[1,])) , matrix(0,41,nd-2) )
+if (nd>3){
+res2 <- cbind( cbind( matrix(0,41,1) , c( (20:(-20))/10*sd( pns1$resmat[2,])) ) , matrix(0,41,nd-3) )
+}
+else
+{
+  res2 <- cbind( cbind( matrix(0,41,1) , c( (20:(-20))/10*sd( pns1$resmat[2,])) )  )
+}
+aa1 <- PNSe2s( t(res1) , pns1$PNS ) -pns1$PNS$mean
+aa2 <- PNSe2s( t(res2) , pns1$PNS ) -pns1$PNS$mean
+plot(aa1[1,],aa2[1,],xlim=c( min(aa1),max(aa1)) , type="n", col=2,  ylim=c(min(aa2),max(aa2)) ,xlab="PNS1", ylab="PNS2")
+for (i in 1:(nd)){
+  lines(aa1[i,],aa2[i,],col=i)
+arrows( aa1[i,2],aa2[i,2],aa1[i,1],aa2[i,1],col=i)
+text( aa1[i,1],aa2[i,1], varnames[i],col=i,cex=1)
+}
+title("PNS biplot")
+palette("default")
+}
 
 
 

@@ -5,7 +5,8 @@
 }
 \usage{
 pns(x, sphere.type = "seq.test", mean.type="Frechet", alpha = 0.1, R = 100, 
-                              nlast.small.sphere = 1, output=TRUE, pointcolor=2)
+                              nlast.small.sphere = 1, output=TRUE, pointcolor=2,
+                              distr="normal", penalty=0)
 }
 %- maybe also `usage' for other objects documented here.
 \arguments{
@@ -20,7 +21,15 @@ specifies Principal Nested SMALL Sphere;
 "great"
 specifies Principal Nested GREAT Sphere (radius pi/2);
 "BIC"
-specifies BIC statistic to decide either "small" or "great"; and
+specifies BIC statistic to decide either "small" or "great" at each level; 
+"distr"
+specifies the residual distribution for a likelihood ratio test to decide either "small" or "great" 
+at each level;  
+"ks.test" specifies Kolmogorov-Smirnov test to decide either "small" or "great" 
+at each level;  
+"var.test" specifies F test for equal variances to decide either "small" or "great" 
+at each level;  
+and
 "bi.sphere"
 specifies Principal Nested GREAT Sphere for the first part and Principal Nested SMALL Sphere for last parts. The default is "seq.test".
 } 
@@ -38,6 +47,8 @@ specifies the Fisher mle a.k.a. resultant mean.
 sphere.type = "bi.sphere".}
 \item{output}{Logical. If TRUE then plots and some brief printed summaries are given. If FALSE then no plots or output is given.} 
 \item{pointcolor}{A number or vector indicating the color of the data points plotted on the sphere S2}
+\item{distr}{The distribution to be used in the likelihood ratio (LR) test, if sphere.type="distr"}
+\item{penalty}{A log-prior penalty to be used in the LR test}
 }
 \value{A list with components
 \item{resmat}{the residual matrix (X_PNS). Each entry in row k works like the kth principal component} 

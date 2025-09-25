@@ -6,9 +6,12 @@ import(
   minpack.lm,
   scatterplot3d,
   rgl,
-  MASS
+  MASS,
+  fitdistrplus
 )
 
+importFrom("fitdistrplus","mledist")
+importFrom("stats", "ks.test", "var.test")
 importFrom("graphics", "arrows", "lines", "par", "persp", "plot",
              "points", "text", "title")
 importFrom("stats", "cmdscale", "cor", "cov", "nlm", "pchisq", "pf",
@@ -20,3 +23,4 @@ importFrom("stats", "cmdscale", "cor", "cov", "nlm", "pchisq", "pf",
   importFrom("utils", "tail")
   importFrom("grDevices", "rainbow")
   importFrom("utils", "head")
+  importFrom("grDevices", "palette")
