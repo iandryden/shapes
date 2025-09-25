@@ -2,6 +2,8 @@
 
 ## Features
 
+pns includes extra options for deciding between great vs small spheres at each stage, namely ks.test, var.test, distr (LR test using particular distributions)
+
 fastpns carries out pns but also has an option to first reduce dimension by PCA to n.pc, then fit pns. Useful for high-dimensional data, e.g. dimension > 30.
 
 Added an option to pns and pnss3d to choose the mean.type. Previously was Frechet and now can be Fisher if desired. 

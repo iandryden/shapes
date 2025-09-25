@@ -1,6 +1,6 @@
 Package: shapes
 Title: Statistical Shape Analysis
-Date: 2025-09-11 
+Date: 2025-09-25 
 Version: 1.2.8  
 Authors@R: person(given = "Ian",
                       family = "Dryden",

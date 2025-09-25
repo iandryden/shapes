@@ -69,7 +69,7 @@ Dryden, I.L., Kim, K., Laughton, C.A. and Le, H. (2019). Principal nested shape 
 
 Jung, S., Dryden, I.L. and Marron, J.S. (2012). Analysis of principal nested spheres. Biometrika, 99, 551-568.
 }
-\author{Kwang-Rae Kim: R translation of Sungkyu Jung's matlab code}
+\author{Primarily Kwang-Rae Kim: R translation of Sungkyu Jung's matlab code, with some additions by Ian Dryden}
 \seealso{pns4pc, pnss3d}
 
 \examples{
