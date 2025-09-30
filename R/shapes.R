@@ -461,32 +461,33 @@ approx1
 
 
 
-fastpns_biplot<-function(pns, varnames){
+fastpns_biplot<-function(pns, varnames, view1=1, view2=2 ){
   pns1<-pns
   nd <- dim(pns$resmat)[1]+1
   ndhigh<-length(pns$muhat)
-palette(rainbow(min(ndhigh,1024)))
-res1 <- cbind( c( (20:(-20))/10*sd( pns1$resmat[1,])) , matrix(0,41,nd-2) )
-if (nd>3){
-res2 <- cbind( cbind( matrix(0,41,1) , c( (20:(-20))/10*sd( pns1$resmat[2,])) ) , matrix(0,41,nd-3) )
-}
-if (nd <= 3)
-{
-  res2 <- cbind( cbind( matrix(0,41,1) , c( (20:(-20))/10*sd( pns1$resmat[2,])) )  )
-}
+  palette(rainbow(min(ndhigh,1024)))
+
+ res<-matrix(0,41,nd-1)
+ res1<-res
+ res2<-res
+ res1[,view1] <- (20:(-20))/10*sd( pns1$resmat[view1,])
+ res2[,view2] <- (20:(-20))/10*sd( pns1$resmat[view2,])
+
+
 mshape <- fastPNSe2s( t(res1)*0 , pns1 )
 aa1 <- fastPNSe2s( t(res1) , pns1 ) -mshape
 aa2 <- fastPNSe2s( t(res2) , pns1 ) -mshape
 nl<- dim(aa1)[1]
 aa1<-t(aa1)
 aa2<-t(aa2)
-plot(aa1[1,],aa2[1,],xlim=c( min(aa1),max(aa1)) , type="n", col=2,  ylim=c(min(aa2),max(aa2)) ,xlab="PNS1", ylab="PNS2")
+plot(aa1[1,],aa2[1,],xlim=c( min(aa1),max(aa1)) , type="n", col=2,  ylim=c(min(aa2),max(aa2)) ,xlab=c("PNS",view1), ylab=c("PNS",view2))
 for (i in 1:(ndhigh)){
   lines(aa1[i,],aa2[i,],col=i)
 arrows( aa1[i,2],aa2[i,2],aa1[i,1],aa2[i,1],col=i)
 text( aa1[i,1],aa2[i,1], varnames[i],col=i,cex=1)
 }
 title("fast PNS biplot")
+
 palette("default")
 }
 
@@ -1401,28 +1402,65 @@ sph2car1<-function (long, lat, radius = 1, deg = TRUE)
 
 
 
-pns_biplot<-function(pns, varnames=rownames(q) ){
+pns_biplot<-function(pns, varnames=rownames(q),view1=1,view2=2,fastPNS=FALSE){
+
+ if (fastPNS){
+    pns1<-pns
+  nd <- dim(pns$resmat)[1]+1
+  ndhigh<-length(pns$muhat)
+  palette(rainbow(min(ndhigh,1024)))
+
+ res<-matrix(0,41,nd-1)
+ res1<-res
+ res2<-res
+ res1[,view1] <- (20:(-20))/10*sd( pns1$resmat[view1,])
+ res2[,view2] <- (20:(-20))/10*sd( pns1$resmat[view2,])
+
+
+mshape <- fastPNSe2s( t(res1)*0 , pns1 )
+aa1 <- fastPNSe2s( t(res1) , pns1 ) -mshape
+aa2 <- fastPNSe2s( t(res2) , pns1 ) -mshape
+nl<- dim(aa1)[1]
+aa1<-t(aa1)
+aa2<-t(aa2)
+plot(aa1[1,],aa2[1,],xlim=c( min(aa1),max(aa1)) , type="n", col=2,  ylim=c(min(aa2),max(aa2)) ,xlab=c("PNS",view1), ylab=c("PNS",view2))
+for (i in 1:(ndhigh)){
+  lines(aa1[i,],aa2[i,],col=i)
+arrows( aa1[i,2],aa2[i,2],aa1[i,1],aa2[i,1],col=i)
+text( aa1[i,1],aa2[i,1], varnames[i],col=i,cex=1)
+}
+title("fast PNS biplot")
+
+palette("default")
+}
+
+else
+{
   pns1<-pns
   nd <- dim(pns$resmat)[1]+1
 palette(rainbow(nd))
-res1 <- cbind( c( (20:(-20))/10*sd( pns1$resmat[1,])) , matrix(0,41,nd-2) )
-if (nd>3){
-res2 <- cbind( cbind( matrix(0,41,1) , c( (20:(-20))/10*sd( pns1$resmat[2,])) ) , matrix(0,41,nd-3) )
-}
-else
-{
-  res2 <- cbind( cbind( matrix(0,41,1) , c( (20:(-20))/10*sd( pns1$resmat[2,])) )  )
-}
+
+ res<-matrix(0,41,nd-1)
+ res1 <- res
+ res1[,view1] <- c( (20:(-20))/10*sd( pns1$resmat[view1,]))
+ res2 <- res
+ res2[,view2]  <- c( (20:(-20))/10*sd( pns1$resmat[view2,]))
+
+
 aa1 <- PNSe2s( t(res1) , pns1$PNS ) -pns1$PNS$mean
 aa2 <- PNSe2s( t(res2) , pns1$PNS ) -pns1$PNS$mean
-plot(aa1[1,],aa2[1,],xlim=c( min(aa1),max(aa1)) , type="n", col=2,  ylim=c(min(aa2),max(aa2)) ,xlab="PNS1", ylab="PNS2")
+
+plot(aa1[1,],aa2[1,],xlim=c( min(aa1),max(aa1)) , type="n", col=2,  ylim=c(min(aa2),max(aa2)) ,xlab=c("PNS",view1), ylab=c("PNS",view2))
 for (i in 1:(nd)){
   lines(aa1[i,],aa2[i,],col=i)
 arrows( aa1[i,2],aa2[i,2],aa1[i,1],aa2[i,1],col=i)
 text( aa1[i,1],aa2[i,1], varnames[i],col=i,cex=1)
 }
 title("PNS biplot")
+
 palette("default")
+}
+
 }
 
 
