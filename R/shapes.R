@@ -876,10 +876,9 @@ if (output){
                       r.g )
       
       mx<- max( c(abs(resSMALL), abs(resGREAT) ))
-      #            plot( density(abs(c(resSMALL))), xlim=c(0,mx) , main =" ")
-      #            lines( density(abs(c(resGREAT))) , col=2 )
+  
       
-      out <- ks.test ( resSMALL, resGREAT )
+      out <- ks.test ( abs(resSMALL) , abs(resGREAT) )
       
       
       
