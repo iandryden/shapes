@@ -782,11 +782,18 @@ if (output){
                       r.g )
       
       if (distr=="normal"){
-        #### normal case
-        NEWsmall = n * log(mean(abs(resSMALL)**2)) + (d - i + 1 + 
-                                                        1) * log(n) + penalty*( r.s - r.g)**2
-        NEWgreat = n * log(mean(abs(resGREAT)**2)) + (d - i + 1) * 
-          log(n)
+        #### normal case based on BIC
+   #     NEWsmall = n * log(mean(abs(resSMALL)**2)) + (d - i + 1 + 
+   #                                                     1) * log(n) + penalty*( r.s - r.g)**2
+   #     NEWgreat = n * log(mean(abs(resGREAT)**2)) + (d - i + 1) * 
+   #       log(n)
+
+
+      #### normal case LR test, chi-squared_1 null
+        NEWsmall = n * log(mean(abs(resSMALL)**2)) + qchisq( 1-alpha ,1) + penalty*( r.s - r.g)**2
+        NEWgreat = n * log(mean(abs(resGREAT)**2))  
+          
+
         #           qqnorm(resSMALL)
         #           qqnorm(resGREAT)
       }
@@ -813,9 +820,8 @@ if (output){
           #             probPlot(abs( resGREAT) , distr="lognormal", plots="QQ")
         }
         ###### more general
-        NEWsmall = -2*outtem1$loglik + (d - i + 1 + 
-                                          1) * log(n) + penalty*( r.s - r.g)**2
-        NEWgreat = -2*outtem2$loglik + (d - i + 1) * 
+        NEWsmall = -2*outtem1$loglik + qchisq(1-alpha, 1) + penalty*( r.s - r.g)**2
+        NEWgreat = -2*outtem2$loglik 
           log(n)
       }
       
