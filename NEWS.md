@@ -1,6 +1,8 @@
 # shapes 1.2.9
 
-no updates yet since 1.2.8 
+In pns function changed the default method to BIC (as much faster)
+
+In pns function changed LR test to use chi-squared_1 critical value
 
 # shapes 1.2.8
 

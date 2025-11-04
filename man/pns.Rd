@@ -4,7 +4,7 @@
 \description{Calculation of Principal Nested Spheres
 }
 \usage{
-pns(x, sphere.type = "seq.test", mean.type="Frechet", alpha = 0.1, R = 100, 
+pns(x, sphere.type = "BIC", mean.type="Frechet", alpha = 0.1, R = 100, 
                               nlast.small.sphere = 1, output=TRUE, pointcolor=2,
                               distr="normal", penalty=0)
 }
@@ -40,7 +40,7 @@ specifies the Frechet mean on a circle;
 "Fisher"
 specifies the Fisher mle a.k.a. resultant mean.
   }
-  \item{alpha}{significance level (0 < alpha < 1) used when sphere.type = "seq.test". The default is 0.1.
+  \item{alpha}{significance level (0 < alpha < 1) used when sphere.type = "seq.test" or "distr". The default is 0.1.
 }
 \item{R}{the number of bootstrap samples to be evaluated for the sequential test. The default is 100.}
 \item{nlast.small.sphere}{the number of small spheres in the finishing part used when 

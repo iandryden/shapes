@@ -500,7 +500,7 @@ palette("default")
 
 #==================================================================================
 pns = function(x,
-               sphere.type = "seq.test", mean.type="Frechet", 
+               sphere.type = "BIC", mean.type="Frechet", 
                alpha = 0.1,
                R = 100,
                nlast.small.sphere = 1, output=TRUE , pointcolor=2,
