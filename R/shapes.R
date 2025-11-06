@@ -213,7 +213,7 @@ rho<-Enorm(U1[i,])
 
 ########
 pnss3d<-
-function (x, sphere.type = "seq.test", mean.type="Frechet", alpha = 0.1, R = 100, 
+function (x, sphere.type = "BIC", mean.type="Frechet", alpha = 0.1, R = 100, 
           nlast.small.sphere = 1, n.pc = "Full", output=TRUE) 
 {
   k = dim(x)[1]
@@ -400,8 +400,8 @@ function (n.pc, X.hat, Xs, Tan, V)
 }
 
 
-fastpns <- function (x, n.pc = "Full", sphere.type = "seq.test", mean.type="Frechet", alpha = 0.1, 
-    R = 100, nlast.small.sphere = 1, output = TRUE, pointcolor = 2) 
+fastpns <- function (x, n.pc = "Full", sphere.type = "BIC", mean.type="Frechet", alpha = 0.1, 
+    R = 100, nlast.small.sphere = 1, distr="normal", output = TRUE, pointcolor = 2) 
 {
     n <- dim(x)[2]
   pdim <- dim(x)[1]
@@ -882,10 +882,7 @@ if (output){
                       r.g )
       
       mx<- max( c(abs(resSMALL), abs(resGREAT) ))
-  
-      
       out <- ks.test ( abs(resSMALL) , abs(resGREAT) )
-      
       
       
       if ( out$p.value > 0.1 ) {

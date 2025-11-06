@@ -5,7 +5,7 @@
 2D or 3D data, small or large samples
 }
 \usage{
-pnss3d(x,sphere.type="seq.test",mean.type="Frechet",alpha = 0.1,R = 100,
+pnss3d(x,sphere.type="BIC",mean.type="Frechet",alpha = 0.1,R = 100,
                         nlast.small.sphere = 1,n.pc="Full",output=TRUE)
 }
 %- maybe also `usage' for other objects documented here.
