@@ -3937,7 +3937,7 @@ procWGPA <-
 
 
 #==================================================================================
-procWGPA1 <- function(X,
+procWGPA1.old <- function(X,
                       mu,
                       metric = "Identity",
                       scale = TRUE,
@@ -12835,6 +12835,287 @@ tanfigure <- uji_tanfigure
 tanfigurefull <- uji_tanfigurefull
 kendall.shpv <- uji_kendall.shpv
 
+
+# Updates to procOPA/procWGPA to handle centering -------------------------
+
+.fort.ROTATEANDREFLECT <- function(a, b, center = TRUE)
+{
+  if(center) {
+    a <- fcnt(a)
+    b <- fcnt(b)
+  }
+  x <- t(a) %*% b
+  xsvd <- svd(x)
+  t <- xsvd$v %*% t(xsvd$u)
+  return(t)
+}
+
+.fort.ROTATION <- function(a, b, center = TRUE)
+{
+  if(center) {
+    abar <- fcnt(a)
+    bbar <- fcnt(b)
+  } else {
+    abar <- a
+    bbar <- b
+  }
+  x <- t(abar) %*% bbar
+  xsvd <- svd(x)
+  v <- xsvd$v
+  u <- xsvd$u
+  tt <- v %*% t(u)
+  chk1 <- Re(prod(eigen(v)$values))
+  chk2 <- Re(prod(eigen(u)$values))
+  if ((chk1 < 0) && (chk2 > 0))
+  {
+    v[, dim(v)[2]] <- v[, dim(v)[2]] * (-1)
+    tt <- v %*% t(u)
+  }
+  if ((chk2 < 0) && (chk1 > 0))
+  {
+    u[, dim(u)[2]] <- u[, dim(u)[2]] * (-1)
+    tt <- v %*% t(u)
+  }
+  return(tt)
+}
+
+.fos.REFLECT <- function(a, b, center = TRUE)
+{
+  if(center) {
+    abar <- fcnt(a)
+    bbar <- fcnt(b)
+  } else {
+    abar <- a
+    bbar <- b
+  }
+  z <- ftrsq(abar, bbar) / sum(diag(t(bbar) %*% bbar))
+  z
+}
+
+.procOPA <- function(A,
+                    B,
+                    scale = TRUE,
+                    reflect = FALSE,
+                    center = TRUE) {
+  out <- list(
+    R = 0,
+    s = 0,
+    Ahat = 0,
+    Bhat = 0,
+    OSS = 0,
+    rmsd = 0
+  )
+  if (is.complex(sum(A)) == TRUE) {
+    k <- length(A)
+    Areal <- matrix(0, k, 2)
+    Areal[, 1] <- Re(A)
+    Areal[, 2] <- Im(A)
+    A <- Areal
+  }
+  if (is.complex(sum(B)) == TRUE) {
+    k <- length(B)
+    Breal <- matrix(0, k, 2)
+    Breal[, 1] <- Re(B)
+    Breal[, 2] <- Im(B)
+    B <- Breal
+  }
+  k <- dim(A)[1]
+  if (reflect == FALSE) {
+    R <- .fort.ROTATION(A, B, center = center)
+  } else
+  {
+    R <- .fort.ROTATEANDREFLECT(A, B, center = center)
+  }
+  s <- 1
+  if (scale == TRUE) {
+    s <- fos(A, B) # not sure what to do about this one yet
+    
+    if (reflect == TRUE) {
+      s <- .fos.REFLECT(A, B, center = center)
+    }
+    
+  }
+  if (center) {
+    Abar <- fcnt(A)
+    Bbar <- fcnt(B) 
+  } else {
+    Abar <- A
+    Bbar <- B
+  }
+  Ahat <- Abar
+  Bhat <- Bbar %*% R * s
+  resid <- Ahat - Bhat
+  OSS <- sum(diag(t(resid) %*% resid))
+  out$R <- R
+  out$s <- s
+  out$Ahat <- Ahat
+  out$Bhat <- Bhat
+  m <- dim(Ahat)[2]
+  out$OSS <- OSS
+  out$rmsd <- sqrt(OSS / (k))
+  out
+}
+
+procWGPA1 <- function(X,
+                      mu,
+                      metric = "Identity",
+                      scale = TRUE,
+                      reflect = FALSE,
+                      sampleweights = "Equal") {
+  k <- dim(X)[1]
+  n <- dim(X)[3]
+  m <- dim(X)[2]
+  
+  sum <- 0
+  for (i in 1:n) {
+    sum <- sum + centroid.size(X[, , i]) ** 2
+  }
+  size1 <- sqrt(sum)
+  
+  
+  
+  
+  
+  if (sampleweights[1] == "Equal") {
+    sampleweights <- rep(1 / n, times = n)
+  }
+  
+  
+  if (length(sampleweights) != n) {
+    cat("Sample weight vector not of correct length \n")
+  }
+  
+  
+  if (metric[1] == "Identity") {
+    Sigmak <- diag(k)
+  }
+  else{
+    Sigmak <- metric
+  }
+  
+  eig <- eigen(Sigmak, symmetric = TRUE)
+  
+  Sighalf <-
+    eig$vectors %*% diag (sqrt(abs(eig$values))) %*% t(eig$vectors)
+  Siginvhalf <-
+    eig$vectors %*% diag(1 / sqrt(abs(eig$values))) %*% t(eig$vectors)
+  Siginv <- eig$vectors %*% diag (1 / (eig$values)) %*% t(eig$vectors)
+  
+  one <- matrix(rep(1, times = k), k, 1)
+  
+  Xstar <- X
+  
+  
+  
+  for (i in 1:n) {
+    Xstar[, , i] <- Xstar[, , i] - one %*% t(one) %*% Siginv %*% Xstar[, , i] /
+      c(t(one) %*% Siginv %*% one)
+    Xstar[, , i] <- Siginvhalf %*% Xstar[, , i]
+  }
+  
+  mu <- mu - one %*% t(one) %*% Siginv %*% mu / c(t(one) %*% Siginv %*% one)
+  
+  
+  ans <- procGPA(Xstar, eigen2d = FALSE)
+  ans2 <- ans
+  
+  dif3 <- 99999999
+  while (dif3 > 0.00001) {
+    for (i in 1:n) {
+      old <- mu
+      tem <-
+        .procOPA(Siginvhalf %*% mu ,
+                Xstar[, , i],
+                scale = scale,
+                reflect = reflect,
+                center = FALSE)
+      Gammai <- tem$R
+      betai <- tem$s
+      #ci <- t(one)%*% Siginvhalf %*% X[,,i] %*% Gammai*betai/k
+      #Yi <- Sighalf%*% ans$rotated[,,i] + Sighalf%*%one%*% ci
+      #Zi <- Yi - one %*% t(one)%*% Siginv %*% Yi / c( t(one)%*%Siginv%*%one )
+      
+      Zi <- Sighalf %*% Xstar[, , i] %*% Gammai * betai
+      ans2$rotated[, , i] <- Zi
+    }
+    
+    sum2 <- 0
+    for (i in 1:n) {
+      sum2 <- sum2 + centroid.size(ans2$rotated[, , i]) ** 2
+    }
+    size2 <- sqrt(sum2)
+    
+    
+    
+    tem <- ans2$mshape * 0
+    for (i in 1:n) {
+      ans2$rotated[, , i] <- ans2$rotated[, , i] * size1 / size2
+      tem <- tem + ans2$rotated[, , i] * sampleweights[i] / sum(sampleweights)
+    }
+    
+    mu <- tem
+    dif3 <- riemdist(old,  mu, reflect=reflect)
+  }
+  
+  
+  
+  
+  
+  z <- ans2
+  z$mshape <- tem
+  
+  tan <- z$rotated[, 1,] - z$mshape[, 1]
+  for (i in 2:m) {
+    tan <- rbind(tan, z$rotated[, i,] - z$mshape[, i])
+  }
+  pca <- prcomp1(t(tan))
+  z$tan <- tan
+  npc <- 0
+  for (i in 1:length(pca$sdev)) {
+    if (pca$sdev[i] > 1e-07) {
+      npc <- npc + 1
+    }
+  }
+  z$scores <- pca$x
+  z$rawscores <- pca$x
+  z$stdscores <- pca$x
+  for (i in 1:npc) {
+    z$stdscores[, i] <- pca$x[, i] / pca$sdev[i]
+  }
+  z$pcar <- pca$rotation
+  z$pcasd <- pca$sdev
+  z$percent <- z$pcasd ^ 2 / sum(z$pcasd ^ 2) * 100
+  
+  size <- rep(0, times = n)
+  rho <- rep(0, times = n)
+  x <- X
+  size <- apply(x, 3, centroid.size)
+  rho <- apply(x, 3, y <- function(x) {
+    riemdist(x, z$mshape,reflect=reflect)
+  })
+  
+  z$rho <- rho
+  z$size <- size
+  z$rmsrho <- sqrt(mean(rho ^ 2))
+  z$rmsd1 <- sqrt(mean(sin(rho) ^ 2))
+  
+  z$k <- k
+  z$m <- m
+  z$n <- n
+  
+  
+  tem <- matrix(0, k, k)
+  
+  for (i in 1:n) {
+    tem <-
+      tem +  (z$rotated[, , i] - z$mshape) %*% t((z$rotated[, , i] - z$mshape))
+  }
+  tem <- tem / (n * m)
+  z$Sigmak <-  tem
+  
+  
+  return(z)
+}
 
 
 ##########################################################################
