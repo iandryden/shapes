@@ -3914,8 +3914,9 @@ procWGPA <-
                procWGPA1(
                   X,
                   ans$mshape,
-                  metric = newmetric ,
+                  metric = newmetric,
                   scale = scale,
+                  reflect = reflect,
                   sampleweights = sampleweights
                )
             plotshapes(ans2$rotated)
