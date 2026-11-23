@@ -3812,7 +3812,7 @@ procWGPA <-
          }
       }
       
-      mu <- procGPA(X, scale = scale)$mshape
+      mu <- procGPA(X, reflect = reflect, scale = scale)$mshape
       
       
       
@@ -12893,6 +12893,20 @@ kendall.shpv <- uji_kendall.shpv
   z
 }
 
+.fos <- function(a, b, center = TRUE) 
+{
+  if(center) {
+    abar <- fcnt(a)
+    bbar <- fcnt(b)
+  } else {
+    abar <- a
+    bbar <- b
+  }
+  
+  z <- sum(diag(.fort.ROTATION(a, b, center = center) %*% t(abar) %*% bbar)) / sum(bbar^2)
+  z
+}
+
 .procOPA <- function(A,
                     B,
                     scale = TRUE,
@@ -12929,7 +12943,7 @@ kendall.shpv <- uji_kendall.shpv
   }
   s <- 1
   if (scale == TRUE) {
-    s <- fos(A, B) # not sure what to do about this one yet
+    s <- .fos(A, B)
     
     if (reflect == TRUE) {
       s <- .fos.REFLECT(A, B, center = center)
